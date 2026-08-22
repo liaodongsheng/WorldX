@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "realms": [
+    { "id": "mortal", "name": "凡人", "requiredCultivation": 100, "breakthroughChance": 0.95, "hp": 100, "qi": 30, "attack": 12, "defense": 8, "speed": 10 },
+    { "id": "qi_refining", "name": "炼气", "requiredCultivation": 300, "breakthroughChance": 0.88, "hp": 140, "qi": 70, "attack": 20, "defense": 14, "speed": 14 },
+    { "id": "foundation", "name": "筑基", "requiredCultivation": 900, "breakthroughChance": 0.78, "hp": 220, "qi": 150, "attack": 36, "defense": 25, "speed": 20 },
+    { "id": "golden_core", "name": "金丹", "requiredCultivation": 2200, "breakthroughChance": 0.68, "hp": 360, "qi": 300, "attack": 62, "defense": 42, "speed": 28 },
+    { "id": "nascent_soul", "name": "元婴", "requiredCultivation": 5000, "breakthroughChance": 0.58, "hp": 560, "qi": 560, "attack": 100, "defense": 70, "speed": 38 },
+    { "id": "spirit_transformation", "name": "化神", "requiredCultivation": 11000, "breakthroughChance": 0.48, "hp": 850, "qi": 950, "attack": 155, "defense": 108, "speed": 50 },
+    { "id": "void_refining", "name": "炼虚", "requiredCultivation": 25000, "breakthroughChance": 0.38, "hp": 1250, "qi": 1500, "attack": 230, "defense": 165, "speed": 65 },
+    { "id": "tribulation", "name": "渡劫", "requiredCultivation": 60000, "breakthroughChance": 0.28, "hp": 1900, "qi": 2400, "attack": 350, "defense": 250, "speed": 85 },
+    { "id": "mahayana", "name": "大乘", "requiredCultivation": null, "breakthroughChance": 0, "hp": 3000, "qi": 4000, "attack": 520, "defense": 380, "speed": 110 }
+  ],
+  "techniques": [
+    { "id": "basic-breathing", "name": "引气诀", "kind": "cultivation", "requiredRealm": "mortal", "cultivationPerHour": 12 },
+    { "id": "chaos-breathing", "name": "混沌吐纳法", "kind": "cultivation", "requiredRealm": "qi_refining", "cultivationPerHour": 28 },
+    { "id": "azure-sword", "name": "青霄剑诀", "kind": "attack", "requiredRealm": "qi_refining", "qiCost": 14, "power": 1.65 },
+    { "id": "spirit-shield", "name": "玄灵护体", "kind": "defense", "requiredRealm": "foundation", "qiCost": 18, "power": 0.6 },
+    { "id": "soul-severing", "name": "斩神一念", "kind": "attack", "requiredRealm": "golden_core", "qiCost": 45, "power": 2.4 }
+  ]
+}
