@@ -1,11 +1,11 @@
 {
   "id": "xiuxian-story",
   "name": "万劫问仙",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "entry": "./src/index.mjs",
   "outline": "./story/outline.json",
   "worldx": {
     "minimumVersion": "0.1.0",
-    "capabilities": ["story-outline", "canonical-ending", "player-protagonist", "serializable-state", "cultivation-rules", "deterministic-combat"]
+    "capabilities": ["story-outline", "canonical-ending", "player-protagonist", "serializable-state", "cultivation-rules", "deterministic-combat", "dynamic-accidents", "causality-guard"]
   }
 }

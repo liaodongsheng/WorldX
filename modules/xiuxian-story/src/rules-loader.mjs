@@ -9,6 +9,11 @@ export async function loadCultivationRules(moduleDir = DEFAULT_MODULE_DIR) {
   return validateCultivationRules(JSON.parse(raw));
 }
 
+export async function loadAccidentRules(moduleDir = DEFAULT_MODULE_DIR) {
+  const raw = await readFile(path.join(moduleDir, "data", "accidents.json"), "utf8");
+  return JSON.parse(raw);
+}
+
 export function validateCultivationRules(rules) {
   if (rules?.schemaVersion !== 1) throw new Error("不支持的修仙规则版本");
   if (!Array.isArray(rules.realms) || rules.realms.length < 2) throw new Error("至少需要两个修炼境界");

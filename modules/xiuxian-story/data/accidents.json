@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "templates": [
+    {
+      "id": "wounded-spirit-beast",
+      "title": "负伤灵兽",
+      "weight": 18,
+      "minimumChapter": 0,
+      "impact": 1,
+      "cooldownTicks": 12,
+      "description": "一只被追杀的幼年灵兽闯入主角的路途。",
+      "choices": [
+        { "id": "rescue", "label": "冒险救下", "tags": ["spirit_beast_rescued", "companion_seed"], "consequences": { "karma": 2, "injury": 1 } },
+        { "id": "hide", "label": "替它遮掩行踪", "tags": ["spirit_beast_hidden"], "consequences": { "karma": 1 } },
+        { "id": "ignore", "label": "不卷入因果", "tags": ["spirit_beast_ignored"], "consequences": { "karma": -1 } }
+      ]
+    },
+    {
+      "id": "ancient-cave",
+      "title": "无名洞府",
+      "weight": 12,
+      "minimumChapter": 1,
+      "impact": 2,
+      "cooldownTicks": 24,
+      "description": "地脉震动露出一座不在宗门记录中的上古洞府。",
+      "choices": [
+        { "id": "explore", "label": "深入洞府", "tags": ["secret_realm_entered"], "consequences": { "cultivation": 80, "danger": 2 } },
+        { "id": "report", "label": "上报宗门", "tags": ["sect_merit_gained"], "consequences": { "reputation": 2 } }
+      ]
+    },
+    {
+      "id": "technique-backlash",
+      "title": "功法反噬",
+      "weight": 10,
+      "minimumChapter": 1,
+      "impact": 2,
+      "cooldownTicks": 18,
+      "description": "修炼中的暗伤突然爆发，灵力开始逆行。",
+      "choices": [
+        { "id": "suppress", "label": "强行压制", "tags": ["backlash_suppressed"], "consequences": { "injury": 2 } },
+        { "id": "rebuild", "label": "散功重修", "tags": ["foundation_rebuilt"], "consequences": { "cultivation": -120, "comprehension": 1 } }
+      ]
+    },
+    {
+      "id": "ally-betrayal",
+      "title": "旧友背叛",
+      "weight": 8,
+      "minimumChapter": 2,
+      "impact": 3,
+      "cooldownTicks": 36,
+      "description": "一名关系亲近的角色因自己的目标向敌人泄露情报。",
+      "choices": [
+        { "id": "forgive", "label": "追问缘由", "tags": ["betrayal_investigated"], "consequences": { "karma": 1, "danger": 2 } },
+        { "id": "punish", "label": "立即清算", "tags": ["betrayer_punished"], "consequences": { "reputation": -1 } },
+        { "id": "counterplot", "label": "将计就计", "tags": ["betrayal_countered"], "consequences": { "danger": 3, "reputation": 2 } }
+      ]
+    },
+    {
+      "id": "heavenly-omen",
+      "title": "天外异象",
+      "weight": 5,
+      "minimumChapter": 3,
+      "impact": 4,
+      "cooldownTicks": 60,
+      "description": "旧天门投下异象，提前干扰人间因果。",
+      "choices": [
+        { "id": "trace", "label": "追索异象", "tags": ["heaven_omen_traced"], "consequences": { "danger": 4, "comprehension": 2 } },
+        { "id": "protect", "label": "先护住百姓", "tags": ["mortals_protected"], "consequences": { "karma": 4 } }
+      ]
+    }
+  ],
+  "causalityCorrections": [
+    { "forbiddenTag": "protagonist_dead", "replacementTag": "protagonist_near_death", "correctionTag": "fate_rebirth", "cost": { "karmaDebt": 3 }, "description": "主角神魂被大纲因果保住，但会留下必须偿还的劫债。" },
+    { "forbiddenTag": "canonical_anchor_destroyed", "replacementTag": "canonical_anchor_displaced", "correctionTag": "anchor_inherited", "cost": { "karmaDebt": 2 }, "description": "关键人物或物品消失后，其剧情职责转移给世界中符合条件的替代者。" },
+    { "forbiddenTag": "heaven_gate_destroyed_early", "replacementTag": "heaven_gate_shell_broken", "correctionTag": "heaven_gate_core_survived", "cost": { "karmaDebt": 1 }, "description": "提前摧毁的只是天门外壳，核心因果仍会在终章显现。" }
+  ]
+}
