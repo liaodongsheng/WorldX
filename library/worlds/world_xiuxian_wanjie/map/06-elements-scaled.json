@@ -1,0 +1,93 @@
+[
+  {
+    "id": "fate_pavilion",
+    "name": "天机台",
+    "description": "太玄宗发布外门委托并映照因果异象的天机台。",
+    "visualDescription": "俯视小木桌，旁挂布幡",
+    "placementHint": "主街右侧中段",
+    "interactions": [
+      {
+        "id": "accept_sect_mission",
+        "name": "领取宗门委托",
+        "description": "从天机台领取与当前章节锚点相符的宗门委托。",
+        "availableWhenState": [
+          "available"
+        ],
+        "duration": 3,
+        "effects": [
+          {
+            "type": "character_need",
+            "target": "curiosity",
+            "value": -5
+          },
+          {
+            "type": "character_need",
+            "target": "peace",
+            "value": 10
+          }
+        ],
+        "repeatable": true,
+        "requiresAnchor": true
+      },
+      {
+        "id": "inspect_fate_orb",
+        "name": "观天机镜",
+        "description": "观察天机镜中一闪而逝的因果征兆。",
+        "availableWhenState": [
+          "available"
+        ],
+        "duration": 1,
+        "effects": [
+          {
+            "type": "character_need",
+            "target": "curiosity",
+            "value": 3
+          }
+        ],
+        "repeatable": true
+      }
+    ],
+    "topLeft": {
+      "x": 1772,
+      "y": 532
+    },
+    "bottomRight": {
+      "x": 2012,
+      "y": 748
+    }
+  },
+  {
+    "id": "ancient_sword_stele",
+    "name": "问剑碑",
+    "description": "供路人感悟剑碑的石质问剑碑。",
+    "visualDescription": "俯视圆形石座，上有立像轮廓",
+    "placementHint": "主街南端",
+    "interactions": [
+      {
+        "id": "resonate_sword_stele",
+        "name": "感悟剑碑",
+        "description": "以神识触碰古剑碑，尝试感悟剑意与劫纹。",
+        "availableWhenState": [
+          "available"
+        ],
+        "duration": 2,
+        "effects": [
+          {
+            "type": "character_need",
+            "target": "peace",
+            "value": 15
+          }
+        ],
+        "repeatable": true
+      }
+    ],
+    "topLeft": {
+      "x": 1572,
+      "y": 1164
+    },
+    "bottomRight": {
+      "x": 1868,
+      "y": 1460
+    }
+  }
+]

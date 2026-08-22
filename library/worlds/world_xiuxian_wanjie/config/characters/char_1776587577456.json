@@ -1,0 +1,17 @@
+{
+  "id": "char_1776587577456",
+  "name": "顾长风",
+  "role": "太玄宗外门引路人",
+  "personality": "温和克制，洞察人心，知道很多宗门旧事却从不一次说尽。",
+  "appearanceHint": "灰蓝道袍，手持拂尘，袖口绣有淡金剑纹。",
+  "motivation": "引导陆尘完成六重劫关，同时避免他过早暴露道种身份。",
+  "socialStyle": "introvert，说话简短含蓄，只有主角触及关键因果时才透露真相。",
+  "traits": ["complex", "mentor"],
+  "startPosition": {"tileX": 236, "tileY": 94, "pixelX": 1892, "pixelY": 756, "locationId": "main_area", "mainAreaPointId": "element_fate_pavilion"},
+  "initialMemories": [
+    {"type": "reflection", "content": "陆尘体内的道种与三百年前那场天劫同源", "importance": 9, "tags": ["secret", "main_plot"]},
+    {"type": "reflection", "content": "天机台今夜映出了第一个剧情锚点：残碑试剑", "importance": 8, "tags": ["anchor", "chapter_1"]},
+    {"type": "reflection", "content": "结局不可被旁枝意外替代，但走到结局的代价可以改变", "importance": 10, "tags": ["canon", "ending"]}
+  ],
+  "anchor": {"type": "element", "targetId": "fate_pavilion"}
+}

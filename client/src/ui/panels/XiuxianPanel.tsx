@@ -41,6 +41,8 @@ type Room = {
 };
 
 type RoomSession = { roomId: string; resumeToken: string; clientSequence: number };
+const VISUAL_WORLD_ID = "world_xiuxian_wanjie";
+const DEFAULT_PROTAGONIST_ID = "char_1776587617698";
 
 export function XiuxianPanel({ selectedCharId }: { selectedCharId: string | null }) {
   const [open, setOpen] = useState(false);
@@ -48,6 +50,7 @@ export function XiuxianPanel({ selectedCharId }: { selectedCharId: string | null
   const [characters, setCharacters] = useState<CharacterInfo[]>([]);
   const [selectedCharacterId, setSelectedCharacterId] = useState("");
   const [rooms, setRooms] = useState<Room[]>([]);
+  const [currentWorldId, setCurrentWorldId] = useState<string | null>(null);
   const [session, setSession] = useState<RoomSession | null>(() => loadSession());
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -56,15 +59,22 @@ export function XiuxianPanel({ selectedCharId }: { selectedCharId: string | null
   const playerId = playerIdRef.current;
 
   const refresh = useCallback(async () => {
-    const [nextStatus, nextCharacters, nextRooms] = await Promise.all([
+    const [nextStatus, nextCharacters, nextRooms, worldInfo] = await Promise.all([
       apiClient.getXiuxianStatus() as Promise<XiuxianStatus>,
       apiClient.getCharacters(),
       apiClient.getXiuxianRooms() as Promise<Room[]>,
+      apiClient.getWorldInfo(),
     ]);
     setStatus(nextStatus);
     setCharacters(nextCharacters);
     setRooms(nextRooms);
-    if (!selectedCharacterId && nextCharacters[0]) setSelectedCharacterId(nextCharacters[0].id);
+    setCurrentWorldId(worldInfo.currentWorldId);
+    if (!selectedCharacterId && nextCharacters[0]) {
+      const preferredCharacter = worldInfo.currentWorldId === VISUAL_WORLD_ID
+        ? nextCharacters.find((character) => character.id === DEFAULT_PROTAGONIST_ID)
+        : undefined;
+      setSelectedCharacterId(preferredCharacter?.id ?? nextCharacters[0].id);
+    }
   }, [selectedCharacterId]);
 
   useEffect(() => {
@@ -152,7 +162,24 @@ export function XiuxianPanel({ selectedCharId }: { selectedCharId: string | null
 
           {!status && <div style={mutedStyle}>正在读取天机……</div>}
 
-          {status && !status.protagonist && (
+          {status && currentWorldId !== VISUAL_WORLD_ID && (
+            <div style={{ ...cardStyle, background: "linear-gradient(135deg,rgba(46,96,127,.28),rgba(74,43,111,.28))", borderColor: "rgba(129,224,255,.3)" }}>
+              <Title>进入可行走的修仙世界</Title>
+              <div style={{ ...mutedStyle, marginBottom: 9 }}>青云坊市不是文字背景：包含碰撞地图、丹符阁、天机台、问剑碑与六名动画角色。</div>
+              <button
+                disabled={busy}
+                style={primaryButtonStyle}
+                onClick={() => act(async () => {
+                  await apiClient.switchWorld(VISUAL_WORLD_ID);
+                  window.location.reload();
+                })}
+              >
+                御剑进入青云坊市
+              </button>
+            </div>
+          )}
+
+          {status && currentWorldId === VISUAL_WORLD_ID && !status.protagonist && (
             <div style={cardStyle}>
               <Title>选择天命主角</Title>
               <select value={selectedCharacterId} onChange={(event) => setSelectedCharacterId(event.target.value)} style={inputStyle}>
@@ -162,7 +189,7 @@ export function XiuxianPanel({ selectedCharId }: { selectedCharId: string | null
             </div>
           )}
 
-          {status?.protagonist && (
+          {status?.protagonist && currentWorldId === VISUAL_WORLD_ID && (
             <>
               <div style={cardStyle}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>

@@ -14,7 +14,7 @@ interface CameraState {
 
 const MINI_W = 200;
 const MINI_W_COMPACT = 160;
-const MINI_MAP_IMAGE_PATH = "/assets/map/06-background.png";
+const MINI_MAP_IMAGE_PATH = "/assets/map/background";
 
 export function MapControls({
   eventBus,

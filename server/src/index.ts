@@ -19,7 +19,7 @@ import godRoutes from "./api/routes/god.js";
 import sandboxChatRoutes from "./api/routes/sandbox-chat.js";
 import timelineRoutes from "./api/routes/timeline.js";
 import xiuxianRoutes from "./api/routes/xiuxian.js";
-import { resolveInitialWorldDir } from "./utils/world-directories.js";
+import { findWorldById, resolveInitialWorldDir } from "./utils/world-directories.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -39,8 +39,30 @@ function createWorldAssetHandler(assetDirName: "map" | "characters"): express.Re
       return;
     }
 
-    res.sendFile(relativePath, {
-      root: path.join(worldDir, assetDirName),
+    const primaryRoot = path.join(worldDir, assetDirName);
+    const resolvedRelativePath = assetDirName === "map" && relativePath === "background"
+      ? ["06-background.png", "06-background.jpg", "06-background.webp"].find((candidate) =>
+          fs.existsSync(path.join(primaryRoot, candidate)),
+        )
+      : relativePath;
+    if (!resolvedRelativePath) {
+      res.status(404).end();
+      return;
+    }
+    const fallbackRoot = assetDirName === "characters"
+      ? resolveCharacterAssetFallbackRoot(worldDir)
+      : undefined;
+    const assetRoot = fs.existsSync(path.join(primaryRoot, resolvedRelativePath))
+      ? primaryRoot
+      : fallbackRoot;
+
+    if (!assetRoot) {
+      res.status(404).end();
+      return;
+    }
+
+    res.sendFile(resolvedRelativePath, {
+      root: assetRoot,
       dotfiles: "deny",
     }, (error) => {
       if (!error) return;
@@ -56,6 +78,25 @@ function createWorldAssetHandler(assetDirName: "map" | "characters"): express.Re
       next(assetError);
     });
   };
+}
+
+function resolveCharacterAssetFallbackRoot(worldDir: string): string | undefined {
+  const worldConfigPath = path.join(worldDir, "config", "world.json");
+  if (!fs.existsSync(worldConfigPath)) return undefined;
+
+  try {
+    const config = JSON.parse(fs.readFileSync(worldConfigPath, "utf-8")) as {
+      assetFallbackWorldId?: unknown;
+    };
+    if (typeof config.assetFallbackWorldId !== "string") return undefined;
+
+    const fallbackWorld = findWorldById(config.assetFallbackWorldId);
+    if (!fallbackWorld || fallbackWorld.dir === worldDir) return undefined;
+    return path.join(fallbackWorld.dir, "characters");
+  } catch (error) {
+    console.warn(`[WorldX] Failed to resolve character asset fallback for ${worldDir}:`, error);
+    return undefined;
+  }
 }
 
 async function main() {

@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import { SPRITE_FRAME_WIDTH, SPRITE_FRAME_HEIGHT } from "../config/game-config";
 
 const MAP_TMJ_PATH = "/assets/map/06-final.tmj";
-const MAP_BACKGROUND_PATH = "/assets/map/06-background.png";
+const MAP_BACKGROUND_PATH = "/assets/map/background";
 
 export class BootScene extends Phaser.Scene {
   constructor() {

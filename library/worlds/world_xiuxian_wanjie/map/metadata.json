@@ -1,0 +1,14 @@
+{
+  "runId": "world_xiuxian_wanjie",
+  "userPrompt": "工笔画风格的修仙宗门坊市，青石主街、丹符阁、天机台、问剑碑、灵灯与阵纹。",
+  "startedAt": "2026-08-21T00:00:00.000Z",
+  "steps": {
+    "step1": {"imageSize": "2K", "width": 2752, "height": 1536, "reviewPassed": true, "attempts": 1},
+    "step2": {"strategy": "quality_78_jpeg", "reviewPassed": true},
+    "step3": {"source": "compatible_world_geometry", "regionCount": 1, "reviewPassed": true},
+    "step3_2": {"elementCount": 2, "reviewPassed": true},
+    "step5": {"gridWidth": 344, "gridHeight": 192, "tileSize": 8}
+  },
+  "warnings": ["碰撞网格沿用同构的汴京夜肆布局，背景重绘时保持道路与建筑轮廓。"],
+  "completedAt": "2026-08-21T00:00:00.000Z"
+}

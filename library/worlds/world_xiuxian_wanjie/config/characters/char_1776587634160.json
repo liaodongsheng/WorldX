@@ -1,0 +1,17 @@
+{
+  "id": "char_1776587634160",
+  "name": "墨九",
+  "role": "酒剑散修",
+  "personality": "看似醉意朦胧，实则心思通透，习惯用玩笑掩盖旧伤。",
+  "appearanceHint": "旧蓝短打，携酒葫芦与残剑，步伐散乱却从不真正失衡。",
+  "motivation": "偿还上一代道种宿主的救命之恩，并找回自己断掉的剑心。",
+  "socialStyle": "extrovert，爱主动搭话，关键线索往往藏在醉话里。",
+  "traits": ["complex", "wanderer"],
+  "startPosition": {"tileX": 310, "tileY": 122, "pixelX": 2480, "pixelY": 976, "locationId": "main_area"},
+  "initialMemories": [
+    {"type": "reflection", "content": "三百年前自己亲眼见过一次失败的终局", "importance": 9, "tags": ["secret", "past_cycle"]},
+    {"type": "reflection", "content": "楚无涯的人今夜会在坊市接头", "importance": 8, "tags": ["rival", "clue"]},
+    {"type": "reflection", "content": "陆尘若能让问剑碑共鸣，就值得自己押上残剑", "importance": 7, "tags": ["lu_chen", "test"]}
+  ],
+  "anchor": null
+}

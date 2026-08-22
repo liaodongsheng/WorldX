@@ -1,0 +1,39 @@
+{
+  "feasible": true,
+  "contentLanguage": "zh",
+  "worldName": "万劫问仙·青云坊市",
+  "worldDescription": "太玄宗山脚的外门坊市，是六章主线的起点。玩家作为陆尘或自选角色在可行走地图中探索，并由剧情导演保证意外不会冲掉既定终局。",
+  "worldSocialContext": "宗门弟子、散修与商旅以境界、师承和功勋判断彼此；公开任务容易打听，涉及道种和劫门的线索会触发防备与试探。",
+  "mapDescription": "俯视工笔画修仙坊市，蓝灰石道横贯画面，暖金灵灯与青色阵纹交相辉映。",
+  "sceneType": "open",
+  "timeConfig": {"startTime": "19:00", "tickDurationMinutes": 15, "maxTicks": 40, "displayFormat": "ancient_chinese"},
+  "sceneTransitionText": {
+    "endOfDayText": "夜深后护山阵渐亮，坊市收摊，值守弟子封闭通往后山的石门。",
+    "newDayText": "暮色降临，灵灯与聚灵阵依次亮起，青云坊市迎来新一轮修士与委托。"
+  },
+  "mapPlan": {
+    "buildingMode": "mostly_scenic",
+    "compositionNotes": "中央青石主街负责移动与相遇，左上丹符阁可进入，右中天机台与下方问剑碑提供剧情交互。",
+    "worldFunctionSummary": "修炼、交易、交谈、触发意外、推进剧情锚点与多人共世。",
+    "regionDesignNotes": "保留 WorldX 样例地图几何，使图像、碰撞网格、区域锚点和角色寻路完全兼容。"
+  },
+  "worldActions": [
+    {"id": "patrol_market", "name": "巡游坊市", "description": "寻找异常灵力与主线人物。", "availableWhenState": ["available"], "duration": 2, "effects": [{"type": "character_need", "target": "curiosity", "value": 8}], "repeatable": true},
+    {"id": "absorb_spiritual_qi", "name": "吐纳灵气", "description": "在聚灵阵附近吐纳并稳定心境。", "availableWhenState": ["available"], "duration": 1, "effects": [{"type": "character_need", "target": "peace", "value": 8}], "repeatable": true}
+  ],
+  "regions": [
+    {"id": "pill_pavilion", "name": "丹符阁", "description": "出售丹药、符箓并提供炼制服务。", "type": "building", "enterable": true, "shapeConstraint": "rectangular", "placementHint": "主街左侧", "visualDescription": "无顶木构灵阁，陈列丹炉、灵瓶与阵台。", "expectedObjects": ["丹炉", "灵药架", "符台"], "interactions": []}
+  ],
+  "interactiveElements": [
+    {"id": "fate_pavilion", "name": "天机台", "description": "领取宗门委托并查看剧情锚点。", "visualDescription": "悬浮灵球与卷轴组成的任务台。", "placementHint": "主街右侧中段", "interactions": []},
+    {"id": "ancient_sword_stele", "name": "问剑碑", "description": "封存上古剑意，可触发第一章残碑试剑。", "visualDescription": "灵剑悬于圆形阵台之上。", "placementHint": "主街南端", "interactions": []}
+  ],
+  "characters": [
+    {"name": "陆尘", "role": "万劫道种宿主（默认主角）"},
+    {"name": "苏清月", "role": "外门剑修"},
+    {"name": "顾长风", "role": "太玄宗外门引路人"},
+    {"name": "莫玄炉", "role": "丹符阁执事"},
+    {"name": "墨九", "role": "酒剑散修"},
+    {"name": "叶霜", "role": "界外来客"}
+  ]
+}

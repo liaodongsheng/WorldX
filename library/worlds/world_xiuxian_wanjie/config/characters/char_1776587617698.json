@@ -1,0 +1,17 @@
+{
+  "id": "char_1776587617698",
+  "name": "陆尘",
+  "role": "万劫道种宿主（默认主角）",
+  "personality": "表面沉静，骨子里倔强，不愿被天命安排，却会为认可的人拼命。",
+  "appearanceHint": "灰黑短打，腰间挂着旧布包，气息普通得近乎刻意。",
+  "motivation": "以自己的方式走完六重劫关，救下同伴并终结万劫轮回。",
+  "socialStyle": "introvert，先观察后行动，对试图替自己做决定的人保持戒心。",
+  "traits": ["complex", "protagonist", "tribulation_seed"],
+  "startPosition": {"tileX": 331, "tileY": 111, "pixelX": 2648, "pixelY": 888, "locationId": "main_area"},
+  "initialMemories": [
+    {"type": "reflection", "content": "自己醒来时掌心多了一道会随心跳发亮的劫纹", "importance": 9, "tags": ["identity", "main_plot"]},
+    {"type": "reflection", "content": "顾长风说问剑碑会告诉自己第一个答案", "importance": 8, "tags": ["anchor", "chapter_1"]},
+    {"type": "reflection", "content": "无论发生多少意外，都不能让别人替自己选择最终一劫", "importance": 10, "tags": ["canon", "ending"]}
+  ],
+  "anchor": null
+}

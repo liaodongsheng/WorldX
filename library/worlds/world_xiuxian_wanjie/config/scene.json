@@ -1,0 +1,17 @@
+{
+  "sceneType": "open",
+  "startTime": "19:00",
+  "tickDurationMinutes": 15,
+  "maxTicks": 40,
+  "displayFormat": "ancient_chinese",
+  "description": "太玄宗山脚的外门坊市，青石主街贯穿丹符阁、天机台与问剑碑。灵灯照夜、阵纹流转，玩家可直接控制主角探索、交谈、修炼并推进剧情锚点。",
+  "multiDay": {
+    "enabled": true,
+    "endOfDayText": "夜深后护山阵渐亮，坊市收摊，值守弟子封闭通往后山的石门。",
+    "newDayText": "暮色降临，灵灯与聚灵阵依次亮起，青云坊市迎来新一轮修士与委托。",
+    "nextDayStartTime": "19:00"
+  },
+  "worldName": "万劫问仙·青云坊市",
+  "worldDescription": "可行走、可交互、可联机的万劫问仙第一张图形世界地图。",
+  "characterCount": 6
+}

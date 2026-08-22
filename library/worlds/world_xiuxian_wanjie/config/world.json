@@ -1,0 +1,492 @@
+{
+  "worldName": "万劫问仙·青云坊市",
+  "assetFallbackWorldId": "world_2026-04-19T08-31-24",
+  "worldDescription": "太玄宗山脚的外门坊市，青石主街贯穿丹符阁、天机台与问剑碑。灵灯照夜、阵纹流转，外门弟子、散修与商旅在此修炼、接取宗门委托并追查万劫道种的线索。",
+  "worldSocialContext": "这里受太玄宗外门规矩约束，修士以境界、师承与功勋判断彼此。坊市消息流通极快，但牵涉禁术、道种与宗门秘辛时人人都会留一手。",
+  "contentLanguage": "zh",
+  "scene": {
+    "sceneType": "open",
+    "startTime": "19:00",
+    "tickDurationMinutes": 15,
+    "maxTicks": 40,
+    "displayFormat": "ancient_chinese",
+    "description": "太玄宗山脚的外门坊市，青石主街贯穿丹符阁、天机台与问剑碑。灵灯照夜、阵纹流转，外门弟子、散修与商旅在此修炼、接取宗门委托并追查万劫道种的线索。",
+    "multiDay": {
+      "enabled": true,
+      "endOfDayText": "夜深后护山阵渐亮，坊市收摊，值守弟子封闭通往后山的石门。",
+      "newDayText": "暮色降临，灵灯与聚灵阵依次亮起，青云坊市迎来新一轮修士与委托。",
+      "nextDayStartTime": "19:00"
+    }
+  },
+  "worldActions": [
+    {
+      "id": "patrol_market",
+      "name": "巡游坊市",
+      "description": "沿青石主街巡查坊市，寻找异常灵力与主线人物。",
+      "availableWhenState": [
+        "available"
+      ],
+      "duration": 2,
+      "effects": [
+        {
+          "type": "character_need",
+          "target": "curiosity",
+          "value": 8
+        }
+      ],
+      "repeatable": true
+    },
+    {
+      "id": "absorb_spiritual_qi",
+      "name": "吐纳灵气",
+      "description": "在聚灵阵纹附近吐纳，缓慢恢复精力并稳定心境。",
+      "availableWhenState": [
+        "available"
+      ],
+      "duration": 1,
+      "effects": [
+        {
+          "type": "character_need",
+          "target": "hunger",
+          "value": -15
+        },
+        {
+          "type": "character_need",
+          "target": "happiness",
+          "value": 10
+        }
+      ],
+      "repeatable": true
+    }
+  ],
+  "locations": [
+    {
+      "id": "main_area",
+      "name": "主区域",
+      "description": "太玄宗山脚的外门坊市，青石主街贯穿丹符阁、天机台与问剑碑。灵灯照夜、阵纹流转，外门弟子、散修与商旅在此修炼、接取宗门委托并追查万劫道种的线索。",
+      "adjacentLocations": [
+        "pill_pavilion"
+      ],
+      "objects": [
+        {
+          "id": "fate_pavilion",
+          "name": "天机台",
+          "locationId": "main_area",
+          "defaultState": "available",
+          "capacity": 2,
+          "interactions": [
+            {
+              "id": "accept_sect_mission",
+              "name": "领取宗门委托",
+              "description": "从天机台领取与当前章节锚点相符的宗门委托。",
+              "availableWhenState": [
+                "available"
+              ],
+              "duration": 3,
+              "effects": [
+                {
+                  "type": "character_need",
+                  "target": "curiosity",
+                  "value": -5
+                },
+                {
+                  "type": "character_need",
+                  "target": "peace",
+                  "value": 10
+                }
+              ],
+              "repeatable": true,
+              "requiresAnchor": true
+            },
+            {
+              "id": "inspect_fate_orb",
+              "name": "观天机镜",
+              "description": "观察天机镜中一闪而逝的因果征兆。",
+              "availableWhenState": [
+                "available"
+              ],
+              "duration": 1,
+              "effects": [
+                {
+                  "type": "character_need",
+                  "target": "curiosity",
+                  "value": 3
+                }
+              ],
+              "repeatable": true
+            }
+          ]
+        },
+        {
+          "id": "ancient_sword_stele",
+          "name": "问剑碑",
+          "locationId": "main_area",
+          "defaultState": "available",
+          "capacity": 2,
+          "interactions": [
+            {
+              "id": "resonate_sword_stele",
+              "name": "感悟剑碑",
+              "description": "以神识触碰古剑碑，尝试感悟剑意与劫纹。",
+              "availableWhenState": [
+                "available"
+              ],
+              "duration": 2,
+              "effects": [
+                {
+                  "type": "character_need",
+                  "target": "peace",
+                  "value": 15
+                }
+              ],
+              "repeatable": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pill_pavilion",
+      "name": "丹符阁",
+      "description": "售卖丹药、符箓并提供基础炼制服务的临街灵阁。",
+      "adjacentLocations": [
+        "main_area"
+      ],
+      "objects": [
+        {
+          "id": "browse_elixirs",
+          "name": "挑选丹药",
+          "locationId": "pill_pavilion",
+          "defaultState": "available",
+          "capacity": 2,
+          "interactions": [
+            {
+              "id": "browse_elixirs",
+              "name": "挑选丹药",
+              "description": "查看丹符阁陈列的回气丹、淬体散与护身符。",
+              "availableWhenState": [
+                "available"
+              ],
+              "duration": 2,
+              "effects": [
+                {
+                  "type": "character_need",
+                  "target": "curiosity",
+                  "value": 5
+                }
+              ],
+              "repeatable": true
+            }
+          ]
+        },
+        {
+          "id": "refine_elixir",
+          "name": "炼制丹药",
+          "locationId": "pill_pavilion",
+          "defaultState": "available",
+          "capacity": 2,
+          "interactions": [
+            {
+              "id": "refine_elixir",
+              "name": "炼制丹药",
+              "description": "消耗灵材开炉炼丹，成功时获得修炼资源。",
+              "availableWhenState": [
+                "available"
+              ],
+              "duration": 3,
+              "effects": [
+                {
+                  "type": "character_need",
+                  "target": "money",
+                  "value": 20
+                },
+                {
+                  "type": "character_need",
+                  "target": "satisfaction",
+                  "value": 5
+                }
+              ],
+              "repeatable": true,
+              "requiresAnchor": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "mainAreaPoints": [
+    {
+      "id": "main_area_point_1",
+      "name": "主区域点位1",
+      "x": 1404,
+      "y": 732,
+      "adjacentPointIds": [
+        "main_area_point_24"
+      ]
+    },
+    {
+      "id": "main_area_point_2",
+      "name": "主区域点位2",
+      "x": 60,
+      "y": 844,
+      "adjacentPointIds": [
+        "main_area_point_23"
+      ]
+    },
+    {
+      "id": "main_area_point_3",
+      "name": "主区域点位3",
+      "x": 2524,
+      "y": 1404,
+      "adjacentPointIds": [
+        "main_area_point_14"
+      ]
+    },
+    {
+      "id": "main_area_point_4",
+      "name": "主区域点位4",
+      "x": 732,
+      "y": 1404,
+      "adjacentPointIds": [
+        "main_area_point_21"
+      ]
+    },
+    {
+      "id": "main_area_point_5",
+      "name": "主区域点位5",
+      "x": 508,
+      "y": 172,
+      "adjacentPointIds": [
+        "main_area_point_17"
+      ]
+    },
+    {
+      "id": "main_area_point_6",
+      "name": "主区域点位6",
+      "x": 2188,
+      "y": 620,
+      "adjacentPointIds": [
+        "main_area_point_20"
+      ]
+    },
+    {
+      "id": "main_area_point_7",
+      "name": "主区域点位7",
+      "x": 1628,
+      "y": 1404,
+      "adjacentPointIds": [
+        "element_ancient_sword_stele",
+        "main_area_point_22"
+      ]
+    },
+    {
+      "id": "main_area_point_8",
+      "name": "主区域点位8",
+      "x": 1404,
+      "y": 60,
+      "adjacentPointIds": [
+        "main_area_point_16"
+      ]
+    },
+    {
+      "id": "main_area_point_9",
+      "name": "主区域点位9",
+      "x": 732,
+      "y": 732,
+      "adjacentPointIds": [
+        "main_area_point_19"
+      ]
+    },
+    {
+      "id": "main_area_point_10",
+      "name": "主区域点位10",
+      "x": 2636,
+      "y": 844,
+      "adjacentPointIds": [
+        "main_area_point_14"
+      ]
+    },
+    {
+      "id": "main_area_point_11",
+      "name": "主区域点位11",
+      "x": 1852,
+      "y": 956,
+      "adjacentPointIds": [
+        "main_area_point_18"
+      ]
+    },
+    {
+      "id": "main_area_point_12",
+      "name": "主区域点位12",
+      "x": 1068,
+      "y": 956,
+      "adjacentPointIds": [
+        "main_area_point_21"
+      ]
+    },
+    {
+      "id": "main_area_point_13",
+      "name": "主区域点位13",
+      "x": 508,
+      "y": 1068,
+      "adjacentPointIds": [
+        "main_area_point_23"
+      ]
+    },
+    {
+      "id": "main_area_point_14",
+      "name": "主区域点位14",
+      "x": 2300,
+      "y": 1068,
+      "adjacentPointIds": [
+        "main_area_point_10",
+        "main_area_point_3"
+      ]
+    },
+    {
+      "id": "main_area_point_15",
+      "name": "主区域点位15",
+      "x": 1516,
+      "y": 1068,
+      "adjacentPointIds": [
+        "main_area_point_18"
+      ]
+    },
+    {
+      "id": "main_area_point_16",
+      "name": "主区域点位16",
+      "x": 1740,
+      "y": 620,
+      "adjacentPointIds": [
+        "main_area_point_8"
+      ]
+    },
+    {
+      "id": "main_area_point_17",
+      "name": "主区域点位17",
+      "x": 284,
+      "y": 396,
+      "adjacentPointIds": [
+        "main_area_point_5"
+      ]
+    },
+    {
+      "id": "main_area_point_18",
+      "name": "主区域点位18",
+      "x": 1628,
+      "y": 844,
+      "adjacentPointIds": [
+        "main_area_point_11",
+        "main_area_point_15"
+      ]
+    },
+    {
+      "id": "main_area_point_19",
+      "name": "主区域点位19",
+      "x": 956,
+      "y": 620,
+      "adjacentPointIds": [
+        "main_area_point_9"
+      ]
+    },
+    {
+      "id": "main_area_point_20",
+      "name": "主区域点位20",
+      "x": 1964,
+      "y": 732,
+      "adjacentPointIds": [
+        "element_fate_pavilion",
+        "main_area_point_6"
+      ]
+    },
+    {
+      "id": "main_area_point_21",
+      "name": "主区域点位21",
+      "x": 844,
+      "y": 1068,
+      "adjacentPointIds": [
+        "main_area_point_12",
+        "main_area_point_4"
+      ]
+    },
+    {
+      "id": "main_area_point_22",
+      "name": "主区域点位22",
+      "x": 1852,
+      "y": 1292,
+      "adjacentPointIds": [
+        "main_area_point_7"
+      ]
+    },
+    {
+      "id": "main_area_point_23",
+      "name": "主区域点位23",
+      "x": 396,
+      "y": 844,
+      "adjacentPointIds": [
+        "main_area_point_13",
+        "main_area_point_2"
+      ]
+    },
+    {
+      "id": "main_area_point_24",
+      "name": "主区域点位24",
+      "x": 1180,
+      "y": 732,
+      "adjacentPointIds": [
+        "main_area_point_1"
+      ]
+    },
+    {
+      "id": "element_fate_pavilion",
+      "name": "天机台附近",
+      "x": 1892,
+      "y": 756,
+      "adjacentPointIds": [
+        "main_area_point_20"
+      ]
+    },
+    {
+      "id": "element_ancient_sword_stele",
+      "name": "问剑碑附近",
+      "x": 1724,
+      "y": 1468,
+      "adjacentPointIds": [
+        "main_area_point_7"
+      ]
+    }
+  ],
+  "worldSize": {
+    "width": 2752,
+    "height": 1536,
+    "tileSize": 8,
+    "gridWidth": 344,
+    "gridHeight": 192
+  },
+  "metadata": {
+    "worldName": "万劫问仙·青云坊市",
+    "worldDescription": "太玄宗山脚的外门坊市，青石主街贯穿丹符阁、天机台与问剑碑。灵灯照夜、阵纹流转，外门弟子、散修与商旅在此修炼、接取宗门委托并追查万劫道种的线索。",
+    "worldSocialContext": "这里受太玄宗外门规矩约束，修士以境界、师承与功勋判断彼此。坊市消息流通极快，但牵涉禁术、道种与宗门秘辛时人人都会留一手。",
+    "sceneType": "open",
+    "timeConfig": {
+      "startTime": "19:00",
+      "tickDurationMinutes": 15,
+      "maxTicks": 40,
+      "displayFormat": "ancient_chinese"
+    },
+    "multiDay": {
+      "enabled": true,
+      "endOfDayText": "夜深后护山阵渐亮，坊市收摊，值守弟子封闭通往后山的石门。",
+      "newDayText": "暮色降临，灵灯与聚灵阵依次亮起，青云坊市迎来新一轮修士与委托。",
+      "nextDayStartTime": "19:00"
+    },
+    "mapPlan": {
+      "buildingMode": "mostly_scenic",
+      "compositionNotes": "中央青石板主街横贯左右，建筑与摊位沿两侧分布。",
+      "worldFunctionSummary": "供修士修炼、交易、结伴和推进万劫问仙主线的宗门坊市。",
+      "regionDesignNotes": "主街左侧丹符阁为唯一可进入建筑，其余互动元素分布在主街两侧。"
+    },
+    "originalPrompt": "太玄宗山脚的青云坊市，主角陆尘可自由探索、修炼、结交同伴，在动态意外中沿万劫问仙大纲走向既定终局"
+  },
+  "originalPrompt": "太玄宗山脚的青云坊市，主角陆尘可自由探索、修炼、结交同伴，在动态意外中沿万劫问仙大纲走向既定终局"
+}

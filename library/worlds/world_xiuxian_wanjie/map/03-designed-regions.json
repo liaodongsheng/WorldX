@@ -1,0 +1,59 @@
+[
+  {
+    "id": "pill_pavilion",
+    "name": "丹符阁",
+    "description": "售卖丹药、符箓并提供基础炼制服务的临街灵阁。",
+    "type": "building",
+    "enterable": true,
+    "shapeConstraint": "rectangular",
+    "placementHint": "主街左侧",
+    "visualDescription": "俯视无顶木构建筑，内有柜台货架",
+    "actions": [
+      "browse_elixirs",
+      "refine_elixir"
+    ],
+    "adjacentRegions": [],
+    "interactions": [
+      {
+        "id": "browse_elixirs",
+        "name": "挑选丹药",
+        "description": "查看丹符阁陈列的回气丹、淬体散与护身符。",
+        "availableWhenState": [
+          "available"
+        ],
+        "duration": 2,
+        "effects": [
+          {
+            "type": "character_need",
+            "target": "curiosity",
+            "value": 5
+          }
+        ],
+        "repeatable": true
+      },
+      {
+        "id": "refine_elixir",
+        "name": "炼制丹药",
+        "description": "消耗灵材开炉炼丹，成功时获得修炼资源。",
+        "availableWhenState": [
+          "available"
+        ],
+        "duration": 3,
+        "effects": [
+          {
+            "type": "character_need",
+            "target": "money",
+            "value": 20
+          },
+          {
+            "type": "character_need",
+            "target": "satisfaction",
+            "value": 5
+          }
+        ],
+        "repeatable": true,
+        "requiresAnchor": true
+      }
+    ]
+  }
+]

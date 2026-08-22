@@ -1,0 +1,36 @@
+{
+  "id": "char_1776587650050",
+  "name": "叶霜",
+  "description": "界外来客，长发白衣，背着异域布包，手持一枚黑色留影法器。",
+  "createdAt": "2026-04-19T08:34:30.906Z",
+  "frameWidth": 170,
+  "frameHeight": 204,
+  "columns": 6,
+  "rows": 5,
+  "animations": {
+    "walk-left": {
+      "start": 0,
+      "end": 5,
+      "frameRate": 8
+    },
+    "walk-down": {
+      "start": 6,
+      "end": 11,
+      "frameRate": 8
+    },
+    "walk-up": {
+      "start": 12,
+      "end": 17,
+      "frameRate": 8
+    },
+    "idle-front": {
+      "frame": 18
+    },
+    "idle-back": {
+      "frame": 19
+    },
+    "idle-left": {
+      "frame": 20
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "id": "char_1776587650050",
+  "name": "叶霜",
+  "role": "界外来客",
+  "personality": "好奇敏锐，不受本界常识束缚，擅长从反常细节推断真相。",
+  "appearanceHint": "白色异域衣裙，背着古怪布包，手持一枚黑色留影法器。",
+  "motivation": "记录万劫世界的异常规则，寻找回归原本世界的坐标。",
+  "socialStyle": "extrovert，喜欢追问修士习以为常却解释不清的事。",
+  "traits": ["complex", "outsider"],
+  "startPosition": {"tileX": 183, "tileY": 137, "pixelX": 1464, "pixelY": 1096, "locationId": "main_area"},
+  "initialMemories": [
+    {"type": "reflection", "content": "自己的留影法器拍不到问剑碑，却能拍到碑后的黑色裂缝", "importance": 8, "tags": ["anomaly", "clue"]},
+    {"type": "reflection", "content": "每次世界重启，坊市的灯笼都会少一盏", "importance": 9, "tags": ["cycle", "main_plot"]},
+    {"type": "reflection", "content": "陆尘可能是唯一保留轮回外记忆的人", "importance": 8, "tags": ["lu_chen", "secret"]}
+  ],
+  "anchor": null
+}
