@@ -81,53 +81,53 @@ export class SimulationEngine {
       throw new Error(`Character is not player-controlled: ${charId}`);
     }
     this.characterManager.getProfile(charId);
-+    const gameTime = this.worldManager.getCurrentTime();
-+    const normalized = this.normalizeDecision(decision);
-+    const events = executeAction(
-+      normalized,
-+      charId,
-+      this.worldManager,
-+      this.characterManager,
-+      gameTime,
-+    );
-+    if (
-+      normalized.actionType === "talk_to" &&
-+      normalized.targetId &&
-+      this.canStartDialogue(charId, normalized.targetId)
-+    ) {
-+      this.createDialogueSession({
-+        initiatorId: charId,
-+        responderId: normalized.targetId,
-+        motivation: normalized.reason,
-+        gameTime,
-+        absNow: absoluteTick(gameTime),
-+      });
-+    }
-+    return this.finalizeTickEvents(events);
-+  }
-+
-+  recordExternalEvent(input: {
-+    actorId: string;
-+    targetId?: string | null;
-+    location?: string;
-+    tags?: string[];
-+    data?: Record<string, any>;
-+  }): SimulationEvent[] {
-+    const gameTime = this.worldManager.getCurrentTime();
-+    const state = this.characterManager.getState(input.actorId);
-+    return this.finalizeTickEvents([{
-+      id: generateId(),
-+      gameDay: gameTime.day,
-+      gameTick: gameTime.tick,
-+      type: "event_triggered",
-+      actorId: input.actorId,
-+      targetId: input.targetId ?? undefined,
-+      location: input.location ?? state.location,
-+      data: input.data ?? {},
-+      tags: ["external_event", ...(input.tags ?? [])],
-+    }]);
-+  }
-+
+    const gameTime = this.worldManager.getCurrentTime();
+    const normalized = this.normalizeDecision(decision);
+    const events = executeAction(
+      normalized,
+      charId,
+      this.worldManager,
+      this.characterManager,
+      gameTime,
+    );
+    if (
+      normalized.actionType === "talk_to" &&
+      normalized.targetId &&
+      this.canStartDialogue(charId, normalized.targetId)
+    ) {
+      this.createDialogueSession({
+        initiatorId: charId,
+        responderId: normalized.targetId,
+        motivation: normalized.reason,
+        gameTime,
+        absNow: absoluteTick(gameTime),
+      });
+    }
+    return this.finalizeTickEvents(events);
+  }
+
+  recordExternalEvent(input: {
+    actorId: string;
+    targetId?: string | null;
+    location?: string;
+    tags?: string[];
+    data?: Record<string, any>;
+  }): SimulationEvent[] {
+    const gameTime = this.worldManager.getCurrentTime();
+    const state = this.characterManager.getState(input.actorId);
+    return this.finalizeTickEvents([{
+      id: generateId(),
+      gameDay: gameTime.day,
+      gameTick: gameTime.tick,
+      type: "event_triggered",
+      actorId: input.actorId,
+      targetId: input.targetId ?? undefined,
+      location: input.location ?? state.location,
+      data: input.data ?? {},
+      tags: ["external_event", ...(input.tags ?? [])],
+    }]);
+  }
+
   async simulateTick(): Promise<SimulationEvent[]> {
     const events: SimulationEvent[] = [];
     const tickAdvance = this.worldManager.advanceTick();
