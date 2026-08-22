@@ -1,0 +1,11 @@
+{
+  "id": "xiuxian-story",
+  "name": "万劫问仙",
+  "version": "0.1.0",
+  "entry": "./src/index.mjs",
+  "outline": "./story/outline.json",
+  "worldx": {
+    "minimumVersion": "0.1.0",
+    "capabilities": ["story-outline", "canonical-ending", "player-protagonist", "serializable-state"]
+  }
+}

@@ -14,13 +14,9 @@
     "compare:models": "node scripts/compare-models.mjs",
     "demo:region-overlay": "node generators/map/src/demo-region-overlay.mjs",
     "generate:map": "node generators/map/src/index.mjs",
-    "generate:character": "node generators/character/src/index.mjs"
+    "generate:character": "node generators/character/src/index.mjs",
+    "test:xiuxian": "node --test modules/xiuxian-story/test/*.test.mjs"
   },
-  "dependencies": {
-    "dotenv": "^16.4.7"
-  },
-  "devDependencies": {
-    "tsx": "^4.21.0",
-    "typescript": "^5.7.3"
-  }
+  "dependencies": { "dotenv": "^16.4.7" },
+  "devDependencies": { "tsx": "^4.21.0", "typescript": "^5.7.3" }
 }

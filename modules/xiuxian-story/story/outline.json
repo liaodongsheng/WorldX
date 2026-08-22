@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "id": "wan-jie-wen-xian-v1",
+  "title": "万劫问仙",
+  "premise": "主角自青云村踏上仙途，在宗门、魔潮与天道崩坏中成长，最终以自身道果重立人间修行秩序。",
+  "playerRole": {
+    "mode": "protagonist",
+    "identity": "青云村遗孤",
+    "freedom": "玩家自由决定修炼、关系、战斗和取舍；剧情导演只约束章节锚点与终局。"
+  },
+  "chapters": [
+    {
+      "id": "ch01-awakening",
+      "title": "灵根初醒",
+      "summary": "青云村遭妖祸，主角觉醒残缺混沌灵根并进入太玄宗。",
+      "anchors": [
+        { "id": "a01-awaken-root", "title": "混沌灵根觉醒", "description": "主角在生死危机中第一次引气入体。", "match": { "actor": "protagonist", "allTags": ["xiuxian", "spirit_root_awakened"] } },
+        { "id": "a02-enter-sect", "title": "拜入太玄", "description": "主角以外门弟子身份进入太玄宗。", "match": { "actor": "protagonist", "allTags": ["xiuxian", "sect_joined"] } }
+      ]
+    },
+    {
+      "id": "ch02-foundation",
+      "title": "道基与人心",
+      "summary": "主角经历内门试炼，在盟友、宿敌与宗门秘密之间完成筑基。",
+      "anchors": [
+        { "id": "a03-inner-trial", "title": "内门试炼", "description": "主角完成一场会改变宗门关系的内门试炼。", "match": { "actor": "protagonist", "allTags": ["xiuxian", "inner_trial_completed"] } },
+        { "id": "a04-foundation", "title": "筑就道基", "description": "主角建立属于自己的道基，代价和方式由世界经历决定。", "match": { "actor": "protagonist", "allTags": ["xiuxian", "realm_foundation"] } }
+      ]
+    },
+    {
+      "id": "ch03-demon-tide",
+      "title": "赤角魔潮",
+      "summary": "赤角妖王引发魔潮，宗门秩序崩裂，主角必须决定保护何人。",
+      "anchors": [
+        { "id": "a05-demon-truth", "title": "魔潮真相", "description": "主角发现魔潮与上古天门封印有关。", "match": { "actor": "protagonist", "allTags": ["xiuxian", "demon_tide_truth"] } },
+        { "id": "a06-defeat-horn-king", "title": "赤角伏诛", "description": "赤角妖王退出历史舞台，可被击杀、封印或策反。", "match": { "allTags": ["xiuxian", "red_horn_resolved"] } }
+      ]
+    },
+    {
+      "id": "ch04-heaven-fracture",
+      "title": "天道裂痕",
+      "summary": "飞升骗局显露，修士成仙实为向残破天门献祭。",
+      "anchors": [
+        { "id": "a07-ascension-secret", "title": "窥见飞升骗局", "description": "主角取得足以证明天门吞噬飞升者的证据。", "match": { "actor": "protagonist", "allTags": ["xiuxian", "ascension_secret_known"] } },
+        { "id": "a08-unite-realms", "title": "诸域盟誓", "description": "主角促成至少三个势力共同对抗天门。", "match": { "actor": "protagonist", "allTags": ["xiuxian", "realms_allied"] } }
+      ]
+    },
+    {
+      "id": "ch05-final-tribulation",
+      "title": "万劫归一",
+      "summary": "旧天道降下终劫，所有支线关系与代价在此汇合。",
+      "anchors": [
+        { "id": "a09-final-tribulation", "title": "渡万劫", "description": "主角以一路形成的道与关系承受终极天劫。", "match": { "actor": "protagonist", "allTags": ["xiuxian", "final_tribulation_survived"] } },
+        { "id": "a10-seal-heaven-gate", "title": "封绝旧天门", "description": "主角关闭吞噬众生的旧飞升通道。", "match": { "actor": "protagonist", "allTags": ["xiuxian", "heaven_gate_sealed"] } }
+      ]
+    },
+    {
+      "id": "ch06-new-dao",
+      "title": "人间新道",
+      "summary": "主角拒绝成为新的独裁天道，以自身道果重建可由众生选择的修行秩序。",
+      "anchors": [
+        { "id": "a11-final-choice", "title": "不作天帝", "description": "主角拒绝独占天道权柄。", "match": { "actor": "protagonist", "allTags": ["xiuxian", "reject_heaven_throne"] } },
+        { "id": "a12-new-dao-established", "title": "新道立世", "description": "新的修行秩序建立，众生不再是飞升祭品。", "match": { "allTags": ["xiuxian", "new_dao_established"] } }
+      ]
+    }
+  ],
+  "canonicalEnding": {
+    "id": "ending-free-cultivation",
+    "title": "人间皆可问仙",
+    "summary": "旧天门永闭，主角散去独占天道的权柄，将升仙选择归还众生。主角仍活在人间，但最终实力、同伴、伤亡与代价由玩家过程决定。",
+    "finalAnchorId": "a12-new-dao-established",
+    "invariants": ["旧天门被永久关闭", "主角拒绝成为独裁天帝", "修行与飞升不再以众生为祭品", "主角存活并留在人间见证新秩序"]
+  }
+}
