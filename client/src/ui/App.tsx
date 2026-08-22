@@ -460,7 +460,7 @@ function AppContent({ eventBus }: { eventBus: Phaser.Events.EventEmitter }) {
             onToggleFollow={handleToggleFollowChar}
             events={events}
           />
-          <XiuxianPanel />
+          <XiuxianPanel selectedCharId={selectedCharId} />
           <DialoguePanel
             events={dialogueEvents.filter(
               (e) => {

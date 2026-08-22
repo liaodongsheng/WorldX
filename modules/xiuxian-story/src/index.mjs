@@ -33,5 +33,5 @@ export async function createXiuxianStoryModule(options = {}) {
     protagonist.bind({ playerId: options.playerId, characterId: options.characterId });
     director.bindProtagonist(options.characterId);
   }
-  return { id: "xiuxian-story", version: "0.6.0", director, protagonist, cultivation, combat, accidents, causality, multiplayer };
+  return { id: "xiuxian-story", version: "0.7.0", director, protagonist, cultivation, combat, accidents, causality, multiplayer };
 }

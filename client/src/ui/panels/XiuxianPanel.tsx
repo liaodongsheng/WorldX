@@ -42,7 +42,7 @@ type Room = {
 
 type RoomSession = { roomId: string; resumeToken: string; clientSequence: number };
 
-export function XiuxianPanel() {
+export function XiuxianPanel({ selectedCharId }: { selectedCharId: string | null }) {
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState<XiuxianStatus | null>(null);
   const [characters, setCharacters] = useState<CharacterInfo[]>([]);
@@ -109,15 +109,15 @@ export function XiuxianPanel() {
     }
   };
 
-  const submitIntent = (type: string, payload: Record<string, unknown> = {}) => act(async () => {
+  const submitIntent = (type: string, payload: Record<string, unknown> = {}, targetId?: string | null) => act(async () => {
     if (session && socketRef.current?.readyState === WebSocket.OPEN) {
       const next = { ...session, clientSequence: session.clientSequence + 1 };
       setSession(next);
       saveSession(next);
-      socketRef.current.send(JSON.stringify({ type: "xiuxian_intent", data: { clientSequence: next.clientSequence, intent: { type, payload } } }));
+      socketRef.current.send(JSON.stringify({ type: "xiuxian_intent", data: { clientSequence: next.clientSequence, intent: { type, targetId, payload } } }));
       return;
     }
-    await apiClient.submitXiuxianAction({ playerId, type, payload });
+    await apiClient.submitXiuxianAction({ playerId, type, targetId, payload });
   });
 
   const useRoomSession = (roomId: string, resumeToken: string) => {
@@ -183,6 +183,16 @@ export function XiuxianPanel() {
                     <Action disabled={busy} onClick={() => submitIntent("meditate", { hours: 4 })}>闭关四时</Action>
                     <Action disabled={busy} onClick={() => act(() => apiClient.attemptXiuxianBreakthrough({ playerId }))}>冲击境界</Action>
                   </div>}
+                </div>
+              )}
+
+              {isProtagonist && selectedCharId && selectedCharId !== status.protagonist.characterId && (
+                <div style={cardStyle}>
+                  <Title>与世界互动</Title>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+                    <div style={mutedStyle}>已选中：{characters.find((item) => item.id === selectedCharId)?.name ?? selectedCharId}</div>
+                    <button disabled={busy} style={smallButtonStyle} onClick={() => submitIntent("talk", { message: "我想与你谈谈。" }, selectedCharId)}>主动交谈</button>
+                  </div>
                 </div>
               )}
 

@@ -1,4 +1,6 @@
 import { getDb, getDbPath } from "../store/db.js";
+import { appContext } from "../services/app-context.js";
+import type { ActionDecision, SimulationEvent } from "../types/index.js";
 import {
   createXiuxianStoryModule,
   type XiuxianEvent,
@@ -41,6 +43,7 @@ export class XiuxianStoryService {
     const runtime = await this.ensureRuntime();
     const binding = runtime.protagonist.bind({ playerId: input.playerId, characterId: input.characterId });
     runtime.director.bindProtagonist(input.characterId);
+    if (appContext.hasWorld) appContext.worldManager.setGlobal(`player_controlled:${input.characterId}`, "true");
     if (!this.cultivationCharacters[input.characterId]) {
       this.cultivationCharacters[input.characterId] = runtime.cultivation.createCharacter({
         id: input.characterId,
@@ -80,9 +83,10 @@ export class XiuxianStoryService {
     }
 
     const processed = this.processWorldEvent(runtime, event);
+    const worldEvents = this.executeWorldXPlayerAction(binding.characterId, input, processed.event);
     runtime.protagonist.drainIntents();
     this.persist();
-    return { intent, ...actionResult, ...processed };
+    return { intent, ...actionResult, ...processed, worldEvents };
   }
 
   async attemptBreakthrough(playerId: string, random?: () => number) {
@@ -241,6 +245,10 @@ export class XiuxianStoryService {
       playerId: saved.protagonistBinding?.playerId,
       characterId: saved.protagonistBinding?.characterId,
     });
+    const binding = this.runtime.protagonist.binding;
+    if (binding && appContext.hasWorld) {
+      appContext.worldManager.setGlobal(`player_controlled:${binding.characterId}`, "true");
+    }
     this.activeDbPath = dbPath;
     return this.runtime;
   }
@@ -253,6 +261,43 @@ export class XiuxianStoryService {
         updated_at TEXT DEFAULT (datetime('now'))
       )
     `);
+  }
+
+  private executeWorldXPlayerAction(
+    characterId: string,
+    input: { type: string; targetId?: string | null; payload?: Record<string, any> },
+    moduleEvent: XiuxianEvent,
+  ): SimulationEvent[] {
+    if (!appContext.hasWorld) return [];
+    let decision: ActionDecision | null = null;
+    if (input.type === "move" && input.targetId) {
+      decision = {
+        actionType: input.targetId.startsWith("main_area:") || input.targetId.startsWith("main_area_point:")
+          ? "move_within_main_area"
+          : "move_to",
+        targetId: input.targetId,
+        reason: "玩家主角主动移动",
+      };
+    } else if (input.type === "talk" && input.targetId) {
+      decision = { actionType: "talk_to", targetId: input.targetId, reason: String(input.payload?.message ?? "玩家主角主动交谈") };
+    } else if (input.type === "world_action" && input.targetId) {
+      decision = { actionType: "world_action", targetId: input.targetId, reason: "玩家主角主动执行世界行动" };
+    }
+
+    const events = decision
+      ? appContext.simulationEngine.executePlayerAction(characterId, decision)
+      : appContext.simulationEngine.recordExternalEvent({
+          actorId: characterId,
+          tags: moduleEvent.tags,
+          data: { moduleEventId: moduleEvent.id, moduleEventType: moduleEvent.type, ...(moduleEvent.data ?? {}) },
+        });
+    if (events.length > 0) {
+      appContext.eventBus.emit("tick_events", {
+        gameTime: appContext.worldManager.getCurrentTime(),
+        events,
+      });
+    }
+    return events;
   }
 
   private persist() {
