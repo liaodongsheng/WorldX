@@ -18,6 +18,7 @@ import simulationRoutes from "./api/routes/simulation.js";
 import godRoutes from "./api/routes/god.js";
 import sandboxChatRoutes from "./api/routes/sandbox-chat.js";
 import timelineRoutes from "./api/routes/timeline.js";
+import xiuxianRoutes from "./api/routes/xiuxian.js";
 import { resolveInitialWorldDir } from "./utils/world-directories.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -104,6 +105,7 @@ async function main() {
   app.use("/api/content", requireWorld, createPublicContentRouter());
   app.use("/api/simulation", requireWorld, simulationRoutes);
   app.use("/api/god", requireWorld, godRoutes);
+  app.use("/api/xiuxian", requireWorld, xiuxianRoutes);
   app.use("/api/sandbox/chat", requireWorld, sandboxChatRoutes);
   app.use("/api/timelines", timelineRoutes);
 

@@ -16,6 +16,7 @@
 - 带章节门槛、权重与冷却的动态意外事件池
 - 意外选择、后果数据和可恢复状态
 - 主角死亡或关键锚点损坏时的因果纠偏与劫债
+- WorldX REST 服务适配和时间线 SQLite 独立状态
 
 ## 目录边界
 
@@ -39,5 +40,15 @@ npm run test:xiuxian
 1. 故事大纲、剧情导演与主角控制（当前阶段）
 2. 修仙境界、功法、修炼与战斗规则（已完成）
 3. 奇遇、事故、因果纠偏和支线生成（基础引擎已完成）
-4. WorldX 模拟引擎、存档和界面接入
+4. WorldX 服务端与时间线存档接入（服务端已完成，界面待接入）
 5. 多人房间、服务器权威同步和断线重连
+
+## 服务端接口
+
+- `GET /api/xiuxian/status`：模块、主角、境界、章节和意外状态
+- `POST /api/xiuxian/protagonist/bind`：绑定 WorldX 角色为玩家主角
+- `POST /api/xiuxian/action`：提交主角行动或打坐
+- `POST /api/xiuxian/breakthrough`：尝试突破境界
+- `POST /api/xiuxian/techniques/:id/learn`：学习功法
+- `POST /api/xiuxian/accidents/propose`：按当前章节触发意外
+- `POST /api/xiuxian/accidents/resolve`：选择意外处理方式

@@ -1,0 +1,203 @@
+import { getDb, getDbPath } from "../store/db.js";
+import {
+  createXiuxianStoryModule,
+  type XiuxianEvent,
+  type XiuxianRuntime,
+} from "../../../modules/xiuxian-story/src/index.mjs";
+
+type PersistedState = {
+  version: 1;
+  protagonistBinding: { playerId: string; characterId: string } | null;
+  directorState: Record<string, unknown> | null;
+  accidentState: Record<string, unknown> | null;
+  causalityState: Record<string, unknown> | null;
+  cultivationCharacters: Record<string, Record<string, any>>;
+};
+
+const STATE_KEY = "runtime";
+
+export class XiuxianStoryService {
+  private runtime: XiuxianRuntime | null = null;
+  private activeDbPath: string | null = null;
+  private cultivationCharacters: PersistedState["cultivationCharacters"] = {};
+
+  async getStatus(): Promise<Record<string, unknown>> {
+    const runtime = await this.ensureRuntime();
+    const binding = runtime.protagonist.binding;
+    return {
+      enabled: true,
+      moduleId: runtime.id,
+      version: runtime.version,
+      protagonist: binding,
+      cultivation: binding ? this.cultivationCharacters[binding.characterId] ?? null : null,
+      story: runtime.director.guidance(),
+      accident: runtime.accidents.state.active ?? null,
+      causality: runtime.causality.state,
+    };
+  }
+
+  async bindProtagonist(input: { playerId: string; characterId: string; characterName: string }) {
+    const runtime = await this.ensureRuntime();
+    const binding = runtime.protagonist.bind({ playerId: input.playerId, characterId: input.characterId });
+    runtime.director.bindProtagonist(input.characterId);
+    if (!this.cultivationCharacters[input.characterId]) {
+      this.cultivationCharacters[input.characterId] = runtime.cultivation.createCharacter({
+        id: input.characterId,
+        name: input.characterName,
+      });
+    }
+    this.persist();
+    return { binding, cultivation: this.cultivationCharacters[input.characterId], story: runtime.director.guidance() };
+  }
+
+  async submitAction(input: { playerId: string; type: string; targetId?: string | null; payload?: Record<string, any> }) {
+    const runtime = await this.ensureRuntime();
+    const binding = this.requirePlayer(runtime, input.playerId);
+    const intent = runtime.protagonist.submitIntent(input);
+    const character = this.requireCultivationCharacter(binding.characterId);
+    let event: XiuxianEvent;
+    let actionResult: Record<string, unknown>;
+
+    if (input.type === "meditate" || input.type === "train") {
+      const result = runtime.cultivation.meditate(character, {
+        hours: input.payload?.hours ?? 1,
+        techniqueId: input.payload?.techniqueId ?? "basic-breathing",
+      });
+      this.cultivationCharacters[binding.characterId] = result.state;
+      event = result.event;
+      actionResult = { cultivation: result.state };
+    } else {
+      event = {
+        id: `player-action-${Date.now()}`,
+        type: "player_action",
+        actorId: binding.characterId,
+        targetId: input.targetId ?? null,
+        tags: ["xiuxian", "player_action", ...(input.payload?.tags ?? [])],
+        data: { actionType: input.type, ...(input.payload ?? {}) },
+      };
+      actionResult = { accepted: true };
+    }
+
+    const processed = this.processWorldEvent(runtime, event);
+    runtime.protagonist.drainIntents();
+    this.persist();
+    return { intent, ...actionResult, ...processed };
+  }
+
+  async attemptBreakthrough(playerId: string, random?: () => number) {
+    const runtime = await this.ensureRuntime();
+    const binding = this.requirePlayer(runtime, playerId);
+    const result = runtime.cultivation.attemptBreakthrough(
+      this.requireCultivationCharacter(binding.characterId),
+      random ? { random } : undefined,
+    );
+    this.cultivationCharacters[binding.characterId] = result.state;
+    const processed = this.processWorldEvent(runtime, result.event);
+    this.persist();
+    return { ...result, ...processed };
+  }
+
+  async learnTechnique(playerId: string, techniqueId: string) {
+    const runtime = await this.ensureRuntime();
+    const binding = this.requirePlayer(runtime, playerId);
+    const result = runtime.cultivation.learnTechnique(this.requireCultivationCharacter(binding.characterId), techniqueId);
+    this.cultivationCharacters[binding.characterId] = result.state;
+    const processed = result.event ? this.processWorldEvent(runtime, result.event) : null;
+    this.persist();
+    return { ...result, processed };
+  }
+
+  async proposeAccident(worldTick: number) {
+    const runtime = await this.ensureRuntime();
+    const chapterIndex = runtime.director.state.chapterIndex as number;
+    const accident = runtime.accidents.propose({ chapterIndex, worldTick });
+    this.persist();
+    return accident;
+  }
+
+  async resolveAccident(input: { playerId: string; instanceId: string; choiceId: string; worldTick: number }) {
+    const runtime = await this.ensureRuntime();
+    const binding = this.requirePlayer(runtime, input.playerId);
+    const result = runtime.accidents.resolve({ ...input, actorId: binding.characterId });
+    const processed = this.processWorldEvent(runtime, result.event);
+    this.persist();
+    return { ...result, ...processed };
+  }
+
+  private processWorldEvent(runtime: XiuxianRuntime, event: XiuxianEvent) {
+    const protectedResult = runtime.causality.protect(event);
+    const story = runtime.director.ingestEvent(protectedResult.event);
+    if (protectedResult.correctionEvent) runtime.director.ingestEvent(protectedResult.correctionEvent);
+    return { event: protectedResult.event, correctionEvent: protectedResult.correctionEvent, story };
+  }
+
+  private requirePlayer(runtime: XiuxianRuntime, playerId: string) {
+    const binding = runtime.protagonist.binding;
+    if (!binding || binding.playerId !== playerId) throw new Error("当前玩家无权控制主角");
+    return binding;
+  }
+
+  private requireCultivationCharacter(characterId: string) {
+    const character = this.cultivationCharacters[characterId];
+    if (!character) throw new Error("主角尚未初始化修炼状态");
+    return character;
+  }
+
+  private async ensureRuntime(): Promise<XiuxianRuntime> {
+    const dbPath = getDbPath();
+    if (this.runtime && this.activeDbPath === dbPath) return this.runtime;
+    this.ensureTable();
+    const row = getDb().prepare("SELECT value FROM xiuxian_module_state WHERE key = ?").get(STATE_KEY) as { value: string } | undefined;
+    const saved = row ? JSON.parse(row.value) as PersistedState : emptyState();
+    this.cultivationCharacters = saved.cultivationCharacters ?? {};
+    this.runtime = await createXiuxianStoryModule({
+      savedState: saved.directorState,
+      accidentState: saved.accidentState,
+      causalityState: saved.causalityState,
+      playerId: saved.protagonistBinding?.playerId,
+      characterId: saved.protagonistBinding?.characterId,
+    });
+    this.activeDbPath = dbPath;
+    return this.runtime;
+  }
+
+  private ensureTable() {
+    getDb().exec(`
+      CREATE TABLE IF NOT EXISTS xiuxian_module_state (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL,
+        updated_at TEXT DEFAULT (datetime('now'))
+      )
+    `);
+  }
+
+  private persist() {
+    if (!this.runtime) return;
+    const state: PersistedState = {
+      version: 1,
+      protagonistBinding: this.runtime.protagonist.binding,
+      directorState: this.runtime.director.state,
+      accidentState: this.runtime.accidents.state,
+      causalityState: this.runtime.causality.state,
+      cultivationCharacters: this.cultivationCharacters,
+    };
+    getDb().prepare(`
+      INSERT INTO xiuxian_module_state (key, value, updated_at)
+      VALUES (?, ?, datetime('now'))
+      ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = datetime('now')
+    `).run(STATE_KEY, JSON.stringify(state));
+  }
+}
+
+function emptyState(): PersistedState {
+  return {
+    version: 1,
+    protagonistBinding: null,
+    directorState: null,
+    accidentState: null,
+    causalityState: null,
+    cultivationCharacters: {},
+  };
+}
+
+export const xiuxianStoryService = new XiuxianStoryService();
