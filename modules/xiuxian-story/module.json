@@ -1,11 +1,11 @@
 {
   "id": "xiuxian-story",
   "name": "万劫问仙",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "entry": "./src/index.mjs",
   "outline": "./story/outline.json",
   "worldx": {
     "minimumVersion": "0.1.0",
-    "capabilities": ["story-outline", "canonical-ending", "player-protagonist", "serializable-state", "cultivation-rules", "deterministic-combat", "dynamic-accidents", "causality-guard", "worldx-server-adapter", "timeline-persistence", "authoritative-multiplayer", "reconnect"]
+    "capabilities": ["story-outline", "canonical-ending", "player-protagonist", "serializable-state", "cultivation-rules", "deterministic-combat", "dynamic-accidents", "causality-guard", "worldx-server-adapter", "timeline-persistence", "authoritative-multiplayer", "reconnect", "react-game-panel"]
   }
 }

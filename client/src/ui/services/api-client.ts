@@ -369,6 +369,44 @@ export const apiClient = {
     return deleteJSON(`/world/worlds/${encodeURIComponent(worldId)}`);
   },
 
+  // --- Xiuxian story module APIs ---
+
+  getXiuxianStatus(): Promise<Record<string, any>> {
+    return fetchJSON("/xiuxian/status");
+  },
+
+  bindXiuxianProtagonist(params: { playerId: string; characterId: string }): Promise<Record<string, any>> {
+    return postJSON("/xiuxian/protagonist/bind", params);
+  },
+
+  submitXiuxianAction(params: { playerId: string; type: string; targetId?: string | null; payload?: Record<string, unknown> }): Promise<Record<string, any>> {
+    return postJSON("/xiuxian/action", params);
+  },
+
+  attemptXiuxianBreakthrough(params: { playerId: string }): Promise<Record<string, any>> {
+    return postJSON("/xiuxian/breakthrough", params);
+  },
+
+  proposeXiuxianAccident(): Promise<Record<string, any> | null> {
+    return postJSON("/xiuxian/accidents/propose");
+  },
+
+  resolveXiuxianAccident(params: { playerId: string; instanceId: string; choiceId: string }): Promise<Record<string, any>> {
+    return postJSON("/xiuxian/accidents/resolve", params);
+  },
+
+  getXiuxianRooms(): Promise<Record<string, any>[]> {
+    return fetchJSON("/xiuxian/rooms");
+  },
+
+  createXiuxianRoom(params: { playerId: string; displayName: string; maxPlayers?: number }): Promise<Record<string, any>> {
+    return postJSON("/xiuxian/rooms", params);
+  },
+
+  joinXiuxianRoom(roomId: string, params: { playerId: string; characterId?: string | null; displayName: string; role: "companion" | "rival" | "sect_member" | "observer" }): Promise<Record<string, any>> {
+    return postJSON(`/xiuxian/rooms/${encodeURIComponent(roomId)}/join`, params);
+  },
+
   // --- Timeline APIs ---
 
   getTimelines(): Promise<{ timelines: TimelineMeta[]; currentTimelineId: string | null }> {

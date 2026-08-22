@@ -11,6 +11,7 @@ import { MapControls } from "./panels/MapControls";
 import { DialoguePanel } from "./panels/DialoguePanel";
 import { SceneTransition } from "./panels/SceneTransition";
 import { WorldIntroBanner } from "./panels/WorldIntroBanner";
+import { XiuxianPanel } from "./panels/XiuxianPanel";
 import { Timeline } from "./pages/Timeline";
 import { CreateWorldPage } from "./pages/CreateWorldPage";
 import { CreateWorldBackground } from "./pages/CreateWorldBackground";
@@ -459,6 +460,7 @@ function AppContent({ eventBus }: { eventBus: Phaser.Events.EventEmitter }) {
             onToggleFollow={handleToggleFollowChar}
             events={events}
           />
+          <XiuxianPanel />
           <DialoguePanel
             events={dialogueEvents.filter(
               (e) => {
