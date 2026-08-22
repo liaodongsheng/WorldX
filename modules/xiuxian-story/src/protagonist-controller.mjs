@@ -1,4 +1,4 @@
-const ALLOWED_INTENTS = new Set(["move", "talk", "world_action", "meditate", "train", "use_skill", "choose"]);
+const ALLOWED_INTENTS = new Set(["move", "talk", "interact", "world_action", "meditate", "train", "use_skill", "choose"]);
 
 export class ProtagonistController {
   #binding = null;

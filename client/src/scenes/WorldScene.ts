@@ -5,10 +5,16 @@ import { PathfindingManager } from "../systems/PathfindingManager";
 import { CharacterMovement } from "../systems/CharacterMovement";
 import { PlaybackController } from "../systems/PlaybackController";
 import { CameraController } from "../systems/CameraController";
+import { XiuxianPlayerController } from "../systems/XiuxianPlayerController";
 import { CharacterSprite } from "../objects/CharacterSprite";
 import { getCharacterColor, actionToEmoji, createCharacterDisplayMetrics } from "../config/game-config";
 import { apiClient } from "../ui/services/api-client";
 import type { CharacterInfo, DialogueEventData, SimulationEvent } from "../types/api";
+import {
+  getOrCreateXiuxianPlayerId,
+  XIUXIAN_DEFAULT_PROTAGONIST_ID,
+  XIUXIAN_WORLD_ID,
+} from "../ui/utils/xiuxian-player";
 
 type DialoguePlaybackTurn = {
   speaker: string;
@@ -33,6 +39,7 @@ export class WorldScene extends Phaser.Scene {
   private characterSprites: Map<string, CharacterSprite> = new Map();
   private playbackController!: PlaybackController;
   private cameraController!: CameraController;
+  private xiuxianPlayerController: XiuxianPlayerController | null = null;
   private eventBus!: Phaser.Events.EventEmitter;
   private entityLayer!: Phaser.GameObjects.Container;
   private dialoguePlaybackLanes: Map<string, DialoguePlaybackLane> = new Map();
@@ -185,6 +192,8 @@ export class WorldScene extends Phaser.Scene {
     this.eventBus.on("tick_playback_started", onTickPlaybackStarted);
     this.eventBus.on("tick_playback_events_flushed", onTickPlaybackEventsFlushed);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.xiuxianPlayerController?.destroy();
+      this.xiuxianPlayerController = null;
       this.eventBus.off("toggle_debug_walkable_overlay", onToggleWalkableOverlay);
       this.eventBus.off("toggle_debug_region_bounds_overlay", onToggleRegionBoundsOverlay);
       this.eventBus.off("toggle_debug_main_area_points_overlay", onToggleMainAreaPointsOverlay);
@@ -199,8 +208,10 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private async initAsync() {
+    let currentWorldId: string | null = null;
     try {
       const worldInfo = await apiClient.getWorldInfo();
+      currentWorldId = worldInfo.currentWorldId ?? null;
       this.mapManager.setMainAreaPoints(worldInfo.mainAreaPoints || []);
       if (this.regionBoundsOverlay || this.mainAreaPointsOverlay || this.interactiveObjectsOverlay) {
         this.refreshDebugOverlays();
@@ -215,6 +226,18 @@ export class WorldScene extends Phaser.Scene {
       console.warn("[WorldScene] Failed to load characters:", e);
     }
 
+    if (currentWorldId === XIUXIAN_WORLD_ID) {
+      try {
+        await this.initXiuxianPlayerControl();
+      } catch (e) {
+        console.warn("[WorldScene] Failed to initialize xiuxian player control:", e);
+        this.eventBus.emit("xiuxian_gameplay_toast", {
+          tone: "error",
+          message: e instanceof Error ? e.message : String(e),
+        });
+      }
+    }
+
     try {
       await this.playbackController.initialize();
     } catch (e) {
@@ -222,6 +245,43 @@ export class WorldScene extends Phaser.Scene {
     }
 
     console.log("[WorldScene] Async init complete, sprites:", this.characterSprites.size);
+  }
+
+  private async initXiuxianPlayerControl(): Promise<void> {
+    const playerId = getOrCreateXiuxianPlayerId();
+    let status = await apiClient.getXiuxianStatus() as {
+      protagonist: { playerId: string; characterId: string } | null;
+    };
+    if (!status.protagonist) {
+      await apiClient.bindXiuxianProtagonist({
+        playerId,
+        characterId: XIUXIAN_DEFAULT_PROTAGONIST_ID,
+      });
+      status = await apiClient.getXiuxianStatus() as typeof status;
+    }
+    if (!status.protagonist || status.protagonist.playerId !== playerId) {
+      throw new Error("当前主角正在由另一位玩家控制，你将以观战模式进入");
+    }
+
+    const locations = await apiClient.getLocations();
+    this.xiuxianPlayerController?.destroy();
+    this.xiuxianPlayerController = new XiuxianPlayerController(
+      this,
+      this.mapManager,
+      this.characterMovement,
+      this.characterSprites,
+      this.eventBus,
+      playerId,
+      status.protagonist.characterId,
+      locations,
+    );
+    this.cameraController.setKeyboardPanEnabled(false);
+    const protagonist = this.characterSprites.get(status.protagonist.characterId);
+    if (protagonist) this.cameraController.followCharacter(protagonist);
+    this.eventBus.emit("xiuxian_control_ready", {
+      playerId,
+      characterId: status.protagonist.characterId,
+    });
   }
 
   private async initCharacters() {
@@ -262,7 +322,7 @@ export class WorldScene extends Phaser.Scene {
           color,
           displayMetrics,
         });
-        sprite.enableClick((id) => this.eventBus.emit("character_clicked", id));
+        sprite.enableClick((id) => this.handleCharacterClick(id));
         this.entityLayer.add(sprite);
         this.characterSprites.set(char.id, sprite);
       }
@@ -299,7 +359,7 @@ export class WorldScene extends Phaser.Scene {
           color,
           displayMetrics,
         });
-        sprite.enableClick((id) => this.eventBus.emit("character_clicked", id));
+        sprite.enableClick((id) => this.handleCharacterClick(id));
         this.entityLayer.add(sprite);
         this.characterSprites.set(char.id, sprite);
       }
@@ -352,6 +412,14 @@ export class WorldScene extends Phaser.Scene {
       pinned: this.mapManager.isPinnedLocation(char.location) || !!char.anchor,
     });
     sprite.syncOverlayZoom(zoom);
+  }
+
+  private handleCharacterClick(charId: string): void {
+    if (this.xiuxianPlayerController) {
+      this.eventBus.emit("xiuxian_character_targeted", charId);
+      return;
+    }
+    this.eventBus.emit("character_clicked", charId);
   }
 
   private async handleSceneDayChange(): Promise<void> {
@@ -865,6 +933,12 @@ export class WorldScene extends Phaser.Scene {
           currentHoveredObjectId = null;
         }
       });
+
+      zone.on("pointerdown", () => {
+        if (this.xiuxianPlayerController) {
+          this.eventBus.emit("xiuxian_object_targeted", object.objectId);
+        }
+      });
     }
   }
 
@@ -904,6 +978,7 @@ export class WorldScene extends Phaser.Scene {
 
   update(_time: number, delta: number) {
     this.cameraController?.update();
+    this.xiuxianPlayerController?.update(_time);
     this.pathfinder?.update();
     this.playbackController?.update(delta);
     if (!this.isReplaying) {

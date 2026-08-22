@@ -22,7 +22,7 @@ router.post("/protagonist/bind", async (req, res) => {
 router.post("/action", async (req, res) => {
   await respond(res, () => xiuxianStoryService.submitAction(z.object({
     playerId: Id,
-    type: z.enum(["move", "talk", "world_action", "meditate", "train", "use_skill", "choose"]),
+    type: z.enum(["move", "talk", "interact", "world_action", "meditate", "train", "use_skill", "choose"]),
     targetId: Id.nullish(),
     payload: z.record(z.any()).optional(),
   }).parse(req.body)));
@@ -107,7 +107,7 @@ router.post("/rooms/:roomId/intents", async (req, res) => {
       resumeToken: Id,
       clientSequence: z.number().int().positive(),
       intent: z.object({
-        type: z.enum(["move", "talk", "world_action", "meditate", "train", "use_skill", "choose"]),
+        type: z.enum(["move", "talk", "interact", "world_action", "meditate", "train", "use_skill", "choose"]),
         targetId: Id.nullish(),
         payload: z.record(z.any()).optional(),
       }),

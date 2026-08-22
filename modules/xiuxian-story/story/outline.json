@@ -14,8 +14,8 @@
       "title": "灵根初醒",
       "summary": "青云村遭妖祸，主角觉醒残缺混沌灵根并进入太玄宗。",
       "anchors": [
-        { "id": "a01-awaken-root", "title": "混沌灵根觉醒", "description": "主角在生死危机中第一次引气入体。", "match": { "actor": "protagonist", "allTags": ["xiuxian", "spirit_root_awakened"] } },
-        { "id": "a02-enter-sect", "title": "拜入太玄", "description": "主角以外门弟子身份进入太玄宗。", "match": { "actor": "protagonist", "allTags": ["xiuxian", "sect_joined"] } }
+        { "id": "a01-awaken-root", "title": "问剑碑共鸣", "description": "前往坊市南端的问剑碑，靠近后按 E 感悟剑碑。", "match": { "actor": "protagonist", "allTags": ["xiuxian", "spirit_root_awakened"] } },
+        { "id": "a02-enter-sect", "title": "拜入太玄", "description": "循着天机台的灵光找到顾长风，与他交谈并接受引路。", "match": { "actor": "protagonist", "allTags": ["xiuxian", "sect_joined"] } }
       ]
     },
     {

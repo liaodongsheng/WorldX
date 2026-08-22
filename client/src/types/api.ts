@@ -125,6 +125,18 @@ export interface LocationInfo {
   id: string;
   name: string;
   description: string;
+  adjacentLocations?: string[];
+  objects?: Array<{
+    id: string;
+    name: string;
+    locationId: string;
+    interactions: Array<{
+      id: string;
+      name: string;
+      description?: string;
+      requiresAnchor?: boolean;
+    }>;
+  }>;
 }
 
 export interface MainAreaPointInfo {

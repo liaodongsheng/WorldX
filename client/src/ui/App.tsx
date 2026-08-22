@@ -11,13 +11,14 @@ import { MapControls } from "./panels/MapControls";
 import { DialoguePanel } from "./panels/DialoguePanel";
 import { SceneTransition } from "./panels/SceneTransition";
 import { WorldIntroBanner } from "./panels/WorldIntroBanner";
-import { XiuxianPanel } from "./panels/XiuxianPanel";
+import { XiuxianGameHUD } from "./panels/XiuxianGameHUD";
 import { Timeline } from "./pages/Timeline";
 import { CreateWorldPage } from "./pages/CreateWorldPage";
 import { CreateWorldBackground } from "./pages/CreateWorldBackground";
 import type { SimulationEvent, DialogueEventData, WorldTimeInfo } from "../types/api";
 import { apiClient } from "./services/api-client";
 import type { GeneratedWorldSummary, WorldInfo } from "./services/api-client";
+import { XIUXIAN_WORLD_ID } from "./utils/xiuxian-player";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -92,6 +93,7 @@ function AppContent({ eventBus }: { eventBus: Phaser.Events.EventEmitter }) {
   const isOverlayRoute =
     location.pathname === "/timeline";
   const hideMainChrome = isOverlayRoute || isCreateRoute;
+  const isXiuxianWorld = worldInfo?.currentWorldId === XIUXIAN_WORLD_ID;
   const ticksPerScene = worldInfo?.sceneRuntime.cycleTicks ?? 48;
   const showDayTransition = worldInfo?.sceneRuntime.transitionEnabled ?? false;
   const endTransitionTitle =
@@ -123,7 +125,9 @@ function AppContent({ eventBus }: { eventBus: Phaser.Events.EventEmitter }) {
   }, [worldInfo?.currentWorldId, worldInfo?.currentTimelineId]);
 
   useEffect(() => {
-    const topOffset = hideMainChrome ? 0 : Math.max(topBarHeight, DEFAULT_TOP_BAR_HEIGHT);
+    const topOffset = hideMainChrome || isXiuxianWorld
+      ? 0
+      : Math.max(topBarHeight, DEFAULT_TOP_BAR_HEIGHT);
     document.documentElement.style.setProperty("--top-ui-offset", `${topOffset}px`);
 
     const rafId = window.requestAnimationFrame(() => {
@@ -131,7 +135,7 @@ function AppContent({ eventBus }: { eventBus: Phaser.Events.EventEmitter }) {
     });
 
     return () => window.cancelAnimationFrame(rafId);
-  }, [hideMainChrome, topBarHeight]);
+  }, [hideMainChrome, isXiuxianWorld, topBarHeight]);
 
   // Hide Phaser canvas / labels on routes that fully take over the screen
   // (e.g. the create-world page). Phaser keeps running but is visually muted.
@@ -422,7 +426,7 @@ function AppContent({ eventBus }: { eventBus: Phaser.Events.EventEmitter }) {
       <div style={{ width: "100%", height: "100%", pointerEvents: "none" }}>
         {!hideMainChrome && (
         <>
-          <TopBar
+          {!isXiuxianWorld && <TopBar
             worldInfo={worldInfo}
             gameTime={gameTime}
             isDevMode={isDevMode}
@@ -443,8 +447,8 @@ function AppContent({ eventBus }: { eventBus: Phaser.Events.EventEmitter }) {
             isReplaying={isReplaying}
             replayProgress={replayProgress}
             onHeightChange={setTopBarHeight}
-          />
-          {worldInfo && (worldInfo.originalPrompt?.trim() || worldInfo.worldDescription?.trim()) && (
+          />}
+          {!isXiuxianWorld && worldInfo && (worldInfo.originalPrompt?.trim() || worldInfo.worldDescription?.trim()) && (
             <WorldIntroBanner
               worldKey={worldInfo.currentWorldId || worldInfo.worldName}
               worldName={worldInfo.worldName}
@@ -453,15 +457,17 @@ function AppContent({ eventBus }: { eventBus: Phaser.Events.EventEmitter }) {
               topOffset={Math.max(topBarHeight, DEFAULT_TOP_BAR_HEIGHT)}
             />
           )}
-          <SidePanel
+          {!isXiuxianWorld && <SidePanel
             selectedCharId={selectedCharId}
             followedCharId={followedCharId}
             onSelect={setSelectedCharId}
             onToggleFollow={handleToggleFollowChar}
             events={events}
-          />
-          <XiuxianPanel selectedCharId={selectedCharId} />
-          <DialoguePanel
+          />}
+          {isXiuxianWorld && (
+            <XiuxianGameHUD eventBus={eventBus} onLeave={() => navigate("/create")} />
+          )}
+          {!isXiuxianWorld && <DialoguePanel
             events={dialogueEvents.filter(
               (e) => {
                 const d = e.data as DialogueEventData | undefined;
@@ -470,8 +476,8 @@ function AppContent({ eventBus }: { eventBus: Phaser.Events.EventEmitter }) {
             )}
             ticksPerScene={ticksPerScene}
             onDismiss={(id) => setDismissedIds((prev) => new Set(prev).add(id))}
-          />
-          <MapControls eventBus={eventBus} />
+          />}
+          {!isXiuxianWorld && <MapControls eventBus={eventBus} />}
           <SceneTransition
             day={gameTime.day + (transitionPhase === "ending" ? 1 : 0)}
             phase={transitionPhase}

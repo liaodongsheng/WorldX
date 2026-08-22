@@ -14,6 +14,7 @@ const DIALOGUE_APPROACH_MAX_CANDIDATES = 24;
 
 export class CharacterMovement {
   private ambientMoveCooldownUntil: Map<string, number> = new Map();
+  private playerControlledCharacterIds: Set<string> = new Set();
   private nextAmbientScanAt = 0;
 
   constructor(
@@ -21,6 +22,36 @@ export class CharacterMovement {
     private pathfinder: PathfindingManager,
     private sprites: Map<string, CharacterSprite>
   ) {}
+
+  setPlayerControlled(charId: string, controlled = true): void {
+    if (controlled) {
+      this.playerControlledCharacterIds.add(charId);
+      this.sprites.get(charId)?.stopMoving();
+    } else {
+      this.playerControlledCharacterIds.delete(charId);
+    }
+  }
+
+  async movePlayerToPoint(
+    charId: string,
+    targetX: number,
+    targetY: number,
+  ): Promise<{ x: number; y: number; locationId: string } | null> {
+    const sprite = this.sprites.get(charId);
+    if (!sprite) return null;
+    if (sprite.isMoving) sprite.stopMoving();
+
+    const path = await this.pathfinder.findPath(sprite.x, sprite.y, targetX, targetY);
+    if (!path || path.length === 0) return null;
+    await this.walkSprite(sprite, path);
+    this.syncSpriteLocation(sprite);
+    sprite.setMovementAnchor({ x: sprite.x, y: sprite.y, pinned: false });
+    return {
+      x: sprite.x,
+      y: sprite.y,
+      locationId: sprite.currentLocationId || "main_area",
+    };
+  }
 
   async moveToLocation(
     charId: string,
@@ -241,6 +272,7 @@ export class CharacterMovement {
     this.nextAmbientScanAt = now + 1000;
 
     for (const [charId, sprite] of this.sprites) {
+      if (this.playerControlledCharacterIds.has(charId)) continue;
       if (!sprite.canAmbientWander()) continue;
 
       const nextMoveAt = this.ambientMoveCooldownUntil.get(charId);

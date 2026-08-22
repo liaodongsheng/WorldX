@@ -42,6 +42,20 @@ test("only the bound player can submit protagonist intents", () => {
   assert.equal(controller.drainIntents().length, 0);
 });
 
+test("accepts direct map interaction intents from the protagonist", () => {
+  const controller = new ProtagonistController();
+  controller.bind({ playerId: "player-1", characterId: "hero-1" });
+  controller.submitIntent({
+    playerId: "player-1",
+    type: "interact",
+    targetId: "ancient_sword_stele",
+    payload: { interactionId: "resonate_sword_stele" },
+  });
+  const [intent] = controller.drainIntents();
+  assert.equal(intent.type, "interact");
+  assert.equal(intent.targetId, "ancient_sword_stele");
+});
+
 test("reaches the fixed ending only after every chapter anchor", async () => {
   const outline = await loadOutline();
   const director = new PlotDirector(outline);

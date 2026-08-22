@@ -1,13 +1,13 @@
 {
   "id": "xiuxian-story",
   "name": "万劫问仙",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "entry": "./src/index.mjs",
   "outline": "./story/outline.json",
   "worldx": {
     "minimumVersion": "0.1.0",
     "visualWorldId": "world_xiuxian_wanjie",
     "defaultProtagonistCharacterId": "char_1776587617698",
-    "capabilities": ["story-outline", "canonical-ending", "player-protagonist", "serializable-state", "cultivation-rules", "deterministic-combat", "dynamic-accidents", "causality-guard", "worldx-server-adapter", "timeline-persistence", "authoritative-multiplayer", "reconnect", "react-game-panel", "worldx-player-control", "playable-phaser-world", "collision-map", "animated-characters"]
+    "capabilities": ["story-outline", "canonical-ending", "player-protagonist", "serializable-state", "cultivation-rules", "deterministic-combat", "dynamic-accidents", "causality-guard", "worldx-server-adapter", "timeline-persistence", "authoritative-multiplayer", "reconnect", "game-hud", "worldx-player-control", "playable-phaser-world", "direct-map-control", "proximity-interaction", "scene-driven-story", "collision-map", "animated-characters"]
   }
 }

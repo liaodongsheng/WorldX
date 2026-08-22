@@ -76,7 +76,7 @@ export class XiuxianStoryService {
         type: "player_action",
         actorId: binding.characterId,
         targetId: input.targetId ?? null,
-        tags: ["xiuxian", "player_action", ...(input.payload?.tags ?? [])],
+        tags: ["xiuxian", "player_action", ...deriveGameplayTags(input, binding.characterId), ...(input.payload?.tags ?? [])],
         data: { actionType: input.type, ...(input.payload ?? {}) },
       };
       actionResult = { accepted: true };
@@ -280,6 +280,13 @@ export class XiuxianStoryService {
       };
     } else if (input.type === "talk" && input.targetId) {
       decision = { actionType: "talk_to", targetId: input.targetId, reason: String(input.payload?.message ?? "玩家主角主动交谈") };
+    } else if (input.type === "interact" && input.targetId && typeof input.payload?.interactionId === "string") {
+      decision = {
+        actionType: "interact_object",
+        targetId: input.targetId,
+        interactionId: input.payload.interactionId,
+        reason: "玩家主角在地图中主动交互",
+      };
     } else if (input.type === "world_action" && input.targetId) {
       decision = { actionType: "world_action", targetId: input.targetId, reason: "玩家主角主动执行世界行动" };
     }
@@ -332,3 +339,32 @@ function emptyState(): PersistedState {
 }
 
 export const xiuxianStoryService = new XiuxianStoryService();
+
+function deriveGameplayTags(input: {
+  type: string;
+  targetId?: string | null;
+  payload?: Record<string, any>;
+}, actorId: string): string[] {
+  const interactionId = input.payload?.interactionId;
+  if (input.type === "interact" && interactionId === "resonate_sword_stele") {
+    if (appContext.hasWorld) {
+      const actorState = appContext.characterManager.getState(actorId);
+      const object = appContext.worldManager
+        .getLocationObjects(actorState.location)
+        .find((candidate) => candidate.id === input.targetId);
+      const interactionExists = object?.interactions.some((candidate) => candidate.id === interactionId);
+      const hasCapacity = object && (object.currentUsers.includes(actorId) || object.currentUsers.length < object.capacity);
+      if (!object || !interactionExists || !hasCapacity) return [];
+    }
+    return ["spirit_root_awakened", "map_interaction"];
+  }
+  if (input.type === "talk" && input.targetId === "char_1776587577456") {
+    if (appContext.hasWorld) {
+      const actorState = appContext.characterManager.getState(actorId);
+      const targetState = appContext.characterManager.getState(input.targetId);
+      if (actorState.location !== targetState.location) return [];
+    }
+    return ["sect_joined", "map_interaction"];
+  }
+  return input.type === "interact" ? ["map_interaction"] : [];
+}

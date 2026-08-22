@@ -124,7 +124,7 @@ function requirePositiveInteger(value: unknown, field: string): number {
 function requireIntent(value: unknown): { type: string; targetId?: string | null; payload?: Record<string, any> } {
   if (!value || typeof value !== "object") throw new Error("行动内容无效");
   const intent = value as Record<string, any>;
-  const allowed = new Set(["move", "talk", "world_action", "meditate", "train", "use_skill", "choose"]);
+  const allowed = new Set(["move", "talk", "interact", "world_action", "meditate", "train", "use_skill", "choose"]);
   if (!allowed.has(intent.type)) throw new Error(`不支持的联机行动: ${intent.type}`);
   return { type: intent.type, targetId: intent.targetId ?? null, payload: intent.payload ?? {} };
 }
