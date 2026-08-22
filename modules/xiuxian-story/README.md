@@ -17,6 +17,8 @@
 - 意外选择、后果数据和可恢复状态
 - 主角死亡或关键锚点损坏时的因果纠偏与劫债
 - WorldX REST 服务适配和时间线 SQLite 独立状态
+- 2–100 人可配置房间、唯一主角身份和角色占用保护
+- 服务器行动序号、防重复提交、权威结算记录与断线恢复凭证
 
 ## 目录边界
 
@@ -41,7 +43,7 @@ npm run test:xiuxian
 2. 修仙境界、功法、修炼与战斗规则（已完成）
 3. 奇遇、事故、因果纠偏和支线生成（基础引擎已完成）
 4. WorldX 服务端与时间线存档接入（服务端已完成，界面待接入）
-5. 多人房间、服务器权威同步和断线重连
+5. 多人房间、服务器权威同步和断线重连（服务端核心与 WebSocket 网关已完成）
 
 ## 服务端接口
 
@@ -52,3 +54,8 @@ npm run test:xiuxian
 - `POST /api/xiuxian/techniques/:id/learn`：学习功法
 - `POST /api/xiuxian/accidents/propose`：按当前章节触发意外
 - `POST /api/xiuxian/accidents/resolve`：选择意外处理方式
+- `GET/POST /api/xiuxian/rooms`：查看或创建联机房间
+- `POST /api/xiuxian/rooms/:id/join`：以同伴、宿敌、宗门成员或观察者加入
+- `POST /api/xiuxian/rooms/:id/intents`：HTTP 降级通道提交权威行动
+
+WebSocket 连接后依次发送 `xiuxian_room_auth` 和带递增 `clientSequence` 的 `xiuxian_intent`。服务端向同房间广播 `xiuxian_action_resolved`，不会把恢复凭证广播给其他玩家。

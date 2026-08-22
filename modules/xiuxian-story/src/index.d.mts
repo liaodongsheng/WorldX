@@ -38,6 +38,18 @@ export type XiuxianRuntime = {
     readonly state: Record<string, any>;
     protect(event: XiuxianEvent): { corrected: boolean; event: XiuxianEvent; correctionEvent: XiuxianEvent | null; state: Record<string, any> };
   };
+  multiplayer: {
+    readonly state: Record<string, any>;
+    createRoom(input: Record<string, unknown>): { room: Record<string, any>; resumeToken: string };
+    joinRoom(input: Record<string, unknown>): { room: Record<string, any>; resumeToken: string };
+    reconnect(input: Record<string, unknown>): Record<string, any>;
+    disconnect(input: Record<string, unknown>): Record<string, any>;
+    resumeRoom(input: Record<string, unknown>): Record<string, any>;
+    submitIntent(input: Record<string, unknown>): Record<string, any>;
+    resolveIntent(input: Record<string, unknown>): Record<string, any>;
+    getRoom(roomId: string): Record<string, any>;
+    listRooms(): Record<string, any>[];
+  };
 };
 
 export function createXiuxianStoryModule(options?: Record<string, unknown>): Promise<XiuxianRuntime>;

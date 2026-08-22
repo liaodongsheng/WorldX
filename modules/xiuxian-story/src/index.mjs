@@ -6,6 +6,7 @@ export { CultivationEngine } from "./cultivation-engine.mjs";
 export { CombatEngine } from "./combat-engine.mjs";
 export { AccidentEngine, validateAccidentConfig } from "./accident-engine.mjs";
 export { CausalityGuard } from "./causality-guard.mjs";
+export { MultiplayerRoomManager } from "./multiplayer-room-manager.mjs";
 
 import { loadOutline } from "./outline-loader.mjs";
 import { PlotDirector } from "./plot-director.mjs";
@@ -15,6 +16,7 @@ import { CultivationEngine } from "./cultivation-engine.mjs";
 import { CombatEngine } from "./combat-engine.mjs";
 import { AccidentEngine } from "./accident-engine.mjs";
 import { CausalityGuard } from "./causality-guard.mjs";
+import { MultiplayerRoomManager } from "./multiplayer-room-manager.mjs";
 
 export async function createXiuxianStoryModule(options = {}) {
   const outline = options.outline ?? await loadOutline(options.moduleDir);
@@ -26,9 +28,10 @@ export async function createXiuxianStoryModule(options = {}) {
   const combat = new CombatEngine(cultivationRules);
   const accidents = new AccidentEngine(accidentRules, options.accidentState);
   const causality = new CausalityGuard(accidentRules.causalityCorrections, options.causalityState);
+  const multiplayer = new MultiplayerRoomManager(options.multiplayerState);
   if (options.playerId && options.characterId) {
     protagonist.bind({ playerId: options.playerId, characterId: options.characterId });
     director.bindProtagonist(options.characterId);
   }
-  return { id: "xiuxian-story", version: "0.3.0", director, protagonist, cultivation, combat, accidents, causality };
+  return { id: "xiuxian-story", version: "0.5.0", director, protagonist, cultivation, combat, accidents, causality, multiplayer };
 }

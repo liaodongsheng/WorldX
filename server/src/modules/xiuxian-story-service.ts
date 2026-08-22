@@ -11,6 +11,7 @@ type PersistedState = {
   directorState: Record<string, unknown> | null;
   accidentState: Record<string, unknown> | null;
   causalityState: Record<string, unknown> | null;
+  multiplayerState: Record<string, unknown> | null;
   cultivationCharacters: Record<string, Record<string, any>>;
 };
 
@@ -124,6 +125,88 @@ export class XiuxianStoryService {
     return { ...result, ...processed };
   }
 
+  async createRoom(input: { playerId: string; displayName: string; maxPlayers?: number }) {
+    const runtime = await this.ensureRuntime();
+    const binding = this.requirePlayer(runtime, input.playerId);
+    const result = runtime.multiplayer.createRoom({
+      hostPlayerId: input.playerId,
+      protagonistCharacterId: binding.characterId,
+      displayName: input.displayName,
+      maxPlayers: input.maxPlayers ?? 32,
+    });
+    this.persist();
+    return result;
+  }
+
+  async joinRoom(input: { roomId: string; playerId: string; characterId?: string | null; displayName: string; role: string }) {
+    const runtime = await this.ensureRuntime();
+    const result = runtime.multiplayer.joinRoom(input);
+    this.persist();
+    return result;
+  }
+
+  async reconnectRoom(input: { roomId: string; playerId: string; resumeToken: string }) {
+    const runtime = await this.ensureRuntime();
+    const room = runtime.multiplayer.reconnect(input);
+    this.persist();
+    return room;
+  }
+
+  async disconnectRoom(input: { roomId: string; playerId: string }) {
+    const runtime = await this.ensureRuntime();
+    const room = runtime.multiplayer.disconnect(input);
+    this.persist();
+    return room;
+  }
+
+  async resumeRoom(input: { roomId: string; playerId: string }) {
+    const runtime = await this.ensureRuntime();
+    const room = runtime.multiplayer.resumeRoom(input);
+    this.persist();
+    return room;
+  }
+
+  async listRooms() {
+    return (await this.ensureRuntime()).multiplayer.listRooms();
+  }
+
+  async getRoom(roomId: string) {
+    return (await this.ensureRuntime()).multiplayer.getRoom(roomId);
+  }
+
+  async submitRoomIntent(input: {
+    roomId: string;
+    playerId: string;
+    resumeToken: string;
+    clientSequence: number;
+    intent: { type: string; targetId?: string | null; payload?: Record<string, any> };
+  }) {
+    const runtime = await this.ensureRuntime();
+    const envelope = runtime.multiplayer.submitIntent(input);
+    let actionResult: Record<string, unknown>;
+    if (envelope.role === "protagonist") {
+      actionResult = await this.submitAction({
+        playerId: input.playerId,
+        type: input.intent.type,
+        targetId: input.intent.targetId,
+        payload: input.intent.payload,
+      });
+    } else {
+      const event: XiuxianEvent = {
+        id: `multiplayer-action-${Date.now()}`,
+        type: "multiplayer_action",
+        actorId: envelope.characterId ?? `player:${input.playerId}`,
+        targetId: input.intent.targetId ?? null,
+        tags: ["xiuxian", "multiplayer_action", ...(input.intent.payload?.tags ?? [])],
+        data: { playerId: input.playerId, role: envelope.role, actionType: input.intent.type, ...(input.intent.payload ?? {}) },
+      };
+      actionResult = this.processWorldEvent(runtime, event);
+    }
+    const resolved = runtime.multiplayer.resolveIntent({ roomId: input.roomId, intentId: envelope.id, result: actionResult });
+    this.persist();
+    return { resolved, room: runtime.multiplayer.getRoom(input.roomId) };
+  }
+
   private processWorldEvent(runtime: XiuxianRuntime, event: XiuxianEvent) {
     const protectedResult = runtime.causality.protect(event);
     const story = runtime.director.ingestEvent(protectedResult.event);
@@ -154,6 +237,7 @@ export class XiuxianStoryService {
       savedState: saved.directorState,
       accidentState: saved.accidentState,
       causalityState: saved.causalityState,
+      multiplayerState: saved.multiplayerState,
       playerId: saved.protagonistBinding?.playerId,
       characterId: saved.protagonistBinding?.characterId,
     });
@@ -179,6 +263,7 @@ export class XiuxianStoryService {
       directorState: this.runtime.director.state,
       accidentState: this.runtime.accidents.state,
       causalityState: this.runtime.causality.state,
+      multiplayerState: this.runtime.multiplayer.state,
       cultivationCharacters: this.cultivationCharacters,
     };
     getDb().prepare(`
@@ -196,6 +281,7 @@ function emptyState(): PersistedState {
     directorState: null,
     accidentState: null,
     causalityState: null,
+    multiplayerState: null,
     cultivationCharacters: {},
   };
 }
